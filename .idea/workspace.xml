@@ -1,7 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="a053f2ce-0c4c-46be-b26a-3a5f2be688e9" name="Default Changelist" comment="" />
+    <list default="true" id="a053f2ce-0c4c-46be-b26a-3a5f2be688e9" name="Default Changelist" comment="">
+      <change afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/dataSources/933148b6-de9b-4d83-99dd-3ac65e96c84e.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/dataSources/933148b6-de9b-4d83-99dd-3ac65e96c84e.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/database.db" beforeDir="false" afterPath="$PROJECT_DIR$/database.db" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -45,7 +50,11 @@
       </list>
     </option>
   </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
   <component name="ProjectId" id="1a2busHFw1umTrctgi9DzQdLsS1" />
+  <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
   <component name="ProjectViewState">
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showExcludedFiles" value="true" />
@@ -55,6 +64,7 @@
     <property name="DatabaseDriversLRU" value="cassandra&#10;sqlite.xerial&#10;sqlite" />
     <property name="DefaultHtmlFileTemplate" value="HTML File" />
     <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
+    <property name="SHARE_PROJECT_CONFIGURATION_FILES" value="true" />
     <property name="WebServerToolWindowFactoryState" value="false" />
     <property name="last_opened_file_path" value="$PROJECT_DIR$/../Lion_Path_Proj" />
     <property name="node.js.detected.package.eslint" value="true" />
@@ -99,7 +109,8 @@
       <workItem from="1586121964932" duration="24402000" />
       <workItem from="1586184878443" duration="10000" />
       <workItem from="1586185141904" duration="2876000" />
-      <workItem from="1586188092510" duration="3357000" />
+      <workItem from="1586188092510" duration="4603000" />
+      <workItem from="1586195603058" duration="598000" />
     </task>
     <servers />
   </component>
@@ -119,22 +130,22 @@
       <screen x="0" y="0" width="1504" height="963" />
     </state>
     <state x="533" y="237" key="FileChooserDialogImpl/0.0.1504.963@0.0.1504.963" timestamp="1586190671340" />
-    <state width="1461" height="260" key="GridCell.Tab.0.bottom" timestamp="1586190923822">
+    <state width="1461" height="260" key="GridCell.Tab.0.bottom" timestamp="1586194101354">
       <screen x="0" y="0" width="1504" height="963" />
     </state>
-    <state width="1461" height="260" key="GridCell.Tab.0.bottom/0.0.1504.963@0.0.1504.963" timestamp="1586190923822" />
-    <state width="1461" height="260" key="GridCell.Tab.0.center" timestamp="1586190923822">
+    <state width="1461" height="260" key="GridCell.Tab.0.bottom/0.0.1504.963@0.0.1504.963" timestamp="1586194101354" />
+    <state width="1461" height="260" key="GridCell.Tab.0.center" timestamp="1586194101354">
       <screen x="0" y="0" width="1504" height="963" />
     </state>
-    <state width="1461" height="260" key="GridCell.Tab.0.center/0.0.1504.963@0.0.1504.963" timestamp="1586190923822" />
-    <state width="1461" height="260" key="GridCell.Tab.0.left" timestamp="1586190923822">
+    <state width="1461" height="260" key="GridCell.Tab.0.center/0.0.1504.963@0.0.1504.963" timestamp="1586194101354" />
+    <state width="1461" height="260" key="GridCell.Tab.0.left" timestamp="1586194101354">
       <screen x="0" y="0" width="1504" height="963" />
     </state>
-    <state width="1461" height="260" key="GridCell.Tab.0.left/0.0.1504.963@0.0.1504.963" timestamp="1586190923822" />
-    <state width="1461" height="260" key="GridCell.Tab.0.right" timestamp="1586190923822">
+    <state width="1461" height="260" key="GridCell.Tab.0.left/0.0.1504.963@0.0.1504.963" timestamp="1586194101354" />
+    <state width="1461" height="260" key="GridCell.Tab.0.right" timestamp="1586194101354">
       <screen x="0" y="0" width="1504" height="963" />
     </state>
-    <state width="1461" height="260" key="GridCell.Tab.0.right/0.0.1504.963@0.0.1504.963" timestamp="1586190923822" />
+    <state width="1461" height="260" key="GridCell.Tab.0.right/0.0.1504.963@0.0.1504.963" timestamp="1586194101354" />
     <state x="254" y="124" key="SettingsEditor" timestamp="1585939332468">
       <screen x="0" y="0" width="1504" height="963" />
     </state>
@@ -147,16 +158,16 @@
       <screen x="0" y="0" width="1504" height="963" />
     </state>
     <state x="462" y="123" key="com.intellij.database.view.ui.AbstractDbRefactoringDialog/0.0.1504.963@0.0.1504.963" timestamp="1585960035001" />
-    <state x="449" y="306" key="com.intellij.ide.util.TipDialog" timestamp="1586188092313">
+    <state x="449" y="306" key="com.intellij.ide.util.TipDialog" timestamp="1586195601709">
       <screen x="0" y="0" width="1504" height="963" />
     </state>
-    <state x="449" y="306" key="com.intellij.ide.util.TipDialog/0.0.1504.963@0.0.1504.963" timestamp="1586188092313" />
+    <state x="449" y="306" key="com.intellij.ide.util.TipDialog/0.0.1504.963@0.0.1504.963" timestamp="1586195601709" />
     <state x="415" y="206" width="672" height="678" key="search.everywhere.popup" timestamp="1586153905571">
       <screen x="0" y="0" width="1504" height="963" />
     </state>
     <state x="415" y="206" width="672" height="678" key="search.everywhere.popup/0.0.1504.963@0.0.1504.963" timestamp="1586153905571" />
   </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
-    <SUITE FILE_PATH="coverage/nittanypath$nittanypath.coverage" NAME="nittanypath Coverage Results" MODIFIED="1586190923822" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="" />
+    <SUITE FILE_PATH="coverage/nittanypath$nittanypath.coverage" NAME="nittanypath Coverage Results" MODIFIED="1586192370754" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="" />
   </component>
 </project>

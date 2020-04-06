@@ -58,7 +58,6 @@
       <ColNames>Courses
 Post_No
 Comment_No</ColNames>
-      <ColumnCollations></ColumnCollations>
       <Unique>1</Unique>
     </index>
     <key id="33" parent="6">
@@ -88,13 +87,11 @@ Comment_No</ColNames>
       <NameSurrogate>1</NameSurrogate>
       <ColNames>Courses
 Course_Name</ColNames>
-      <ColumnCollations></ColumnCollations>
       <Unique>1</Unique>
     </index>
     <index id="39" parent="7" name="sqlite_autoindex_Course_1">
       <NameSurrogate>1</NameSurrogate>
       <ColNames>Courses</ColNames>
-      <ColumnCollations></ColumnCollations>
       <Unique>1</Unique>
     </index>
     <key id="40" parent="7">
@@ -158,7 +155,6 @@ Course_Name</ColNames>
     <index id="54" parent="9" name="sqlite_autoindex_Course_ID_1">
       <NameSurrogate>1</NameSurrogate>
       <ColNames>Courses</ColNames>
-      <ColumnCollations></ColumnCollations>
       <Unique>1</Unique>
     </index>
     <key id="55" parent="9">
@@ -181,13 +177,11 @@ Course_Name</ColNames>
       <NameSurrogate>1</NameSurrogate>
       <ColNames>Department
 Department_Name</ColNames>
-      <ColumnCollations></ColumnCollations>
       <Unique>1</Unique>
     </index>
     <index id="60" parent="10" name="sqlite_autoindex_Departments_1">
       <NameSurrogate>1</NameSurrogate>
       <ColNames>Department</ColNames>
-      <ColumnCollations></ColumnCollations>
       <Unique>1</Unique>
     </index>
     <key id="61" parent="10">
@@ -217,7 +211,6 @@ Department_Name</ColNames>
       <ColNames>Student_Email
 Courses
 Course_Section</ColNames>
-      <ColumnCollations></ColumnCollations>
       <Unique>1</Unique>
     </index>
     <key id="67" parent="11">
@@ -253,7 +246,6 @@ Course_Section</ColNames>
 Courses
 Course_Section
 Course_Exam_No</ColNames>
-      <ColumnCollations></ColumnCollations>
       <Unique>1</Unique>
     </index>
     <index id="74" parent="12" name="sqlite_autoindex_Exam_Grades_1">
@@ -261,7 +253,6 @@ Course_Exam_No</ColNames>
       <ColNames>Student_Email
 Courses
 Course_Section</ColNames>
-      <ColumnCollations></ColumnCollations>
       <Unique>1</Unique>
     </index>
     <key id="75" parent="12">
@@ -299,14 +290,12 @@ Course_Exam_No</ColNames>
       <ColNames>Courses
 Course_Section
 Course_Exam_No</ColNames>
-      <ColumnCollations></ColumnCollations>
       <Unique>1</Unique>
     </index>
     <index id="82" parent="13" name="sqlite_autoindex_Exams_1">
       <NameSurrogate>1</NameSurrogate>
       <ColNames>Courses
 Course_Section</ColNames>
-      <ColumnCollations></ColumnCollations>
       <Unique>1</Unique>
     </index>
     <key id="83" parent="13">
@@ -342,14 +331,12 @@ Course_Exam_No</ColNames>
       <ColNames>Courses
 Course_Section
 Course_HW_No</ColNames>
-      <ColumnCollations></ColumnCollations>
       <Unique>1</Unique>
     </index>
     <index id="90" parent="14" name="sqlite_autoindex_Homework_1">
       <NameSurrogate>1</NameSurrogate>
       <ColNames>Courses
 Course_Section</ColNames>
-      <ColumnCollations></ColumnCollations>
       <Unique>1</Unique>
     </index>
     <key id="91" parent="14">
@@ -390,7 +377,6 @@ Course_HW_No</ColNames>
 Courses
 Course_Section
 Course_HW_No</ColNames>
-      <ColumnCollations></ColumnCollations>
       <Unique>1</Unique>
     </index>
     <index id="99" parent="15" name="sqlite_autoindex_Homework_Grades_1">
@@ -398,7 +384,6 @@ Course_HW_No</ColNames>
       <ColNames>Student_Email
 Courses
 Course_Section</ColNames>
-      <ColumnCollations></ColumnCollations>
       <Unique>1</Unique>
     </index>
     <key id="100" parent="15">
@@ -435,7 +420,6 @@ Course_HW_No</ColNames>
       <NameSurrogate>1</NameSurrogate>
       <ColNames>Courses
 Post_No</ColNames>
-      <ColumnCollations></ColumnCollations>
       <Unique>1</Unique>
     </index>
     <key id="107" parent="16">
@@ -454,7 +438,6 @@ Post_No</ColNames>
     <index id="110" parent="17" name="sqlite_autoindex_Prof_teaching_teams_1">
       <NameSurrogate>1</NameSurrogate>
       <ColNames>Professor_Email</ColNames>
-      <ColumnCollations></ColumnCollations>
       <Unique>1</Unique>
     </index>
     <key id="111" parent="17">
@@ -497,7 +480,6 @@ Post_No</ColNames>
     <index id="120" parent="18" name="sqlite_autoindex_Professors_1">
       <NameSurrogate>1</NameSurrogate>
       <ColNames>Professor_Email</ColNames>
-      <ColumnCollations></ColumnCollations>
       <Unique>1</Unique>
     </index>
     <key id="121" parent="18">
@@ -525,7 +507,6 @@ Post_No</ColNames>
       <NameSurrogate>1</NameSurrogate>
       <ColNames>Courses
 Course_Section</ColNames>
-      <ColumnCollations></ColumnCollations>
       <Unique>1</Unique>
     </index>
     <key id="127" parent="19">
@@ -569,7 +550,6 @@ Course_Section</ColNames>
     <index id="136" parent="20" name="sqlite_autoindex_Students_1">
       <NameSurrogate>1</NameSurrogate>
       <ColNames>Student_Email</ColNames>
-      <ColumnCollations></ColumnCollations>
       <Unique>1</Unique>
     </index>
     <key id="137" parent="20">
@@ -588,7 +568,6 @@ Course_Section</ColNames>
     <index id="140" parent="21" name="sqlite_autoindex_TA_teaching_teams_1">
       <NameSurrogate>1</NameSurrogate>
       <ColNames>Student_Email</ColNames>
-      <ColumnCollations></ColumnCollations>
       <Unique>1</Unique>
     </index>
     <key id="141" parent="21">
