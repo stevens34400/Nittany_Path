@@ -17,6 +17,9 @@ host = 'http://127.0.0.1:5000/'
 #Used to hash passwords
 users={}
 
+#Global variable for user input email
+user_input_email = "test"
+
 @app.route('/')
 def index():
     connection = sql.connect('database.db')
@@ -93,9 +96,9 @@ def index():
 
     ###CREATE AND FILL IN PROFESSORS TABLE
     cursor.execute('''CREATE TABLE IF NOT EXISTS Professors(Professor_Email TEXT PRIMARY KEY,Password TEXT,Name TEXT,
-                        Age INTEGER, Gender TEXT, Office_Address TEXT, Department TEXT, Title TEXT)''')
-    cursor.execute('''INSERT OR IGNORE INTO Professors(Professor_Email, Password, Name, Age, Gender, Office_Address, Department, Title)
-                        SELECT  Professor_Email, Password, Name, Age, Gender, Office_Address, Department, Title
+                        Age INTEGER, Gender TEXT, Office_Address TEXT, Department TEXT, Title TEXT, Course TEXT)''')
+    cursor.execute('''INSERT OR IGNORE INTO Professors(Professor_Email, Password, Name, Age, Gender, Office_Address, Department, Title, Course)
+                        SELECT  Professor_Email, Password, Name, Age, Gender, Office_Address, Department, Title, Teaching AS Course
                         FROM    professor_csv
     ''')
 
@@ -329,8 +332,8 @@ def index():
 def login():
     error = None
     if request.method == 'POST' :
-        #print("Users")
-        #print(users)
+        #make sure to utilize gloabla user_input_email so that further functionalities can consider this
+        global user_input_email
         user_input_email = (request.form['Email'])
         user_input_password = request.form['Password']
 
@@ -353,12 +356,16 @@ def login():
             return (render_template('Home.html'))
         else:
             return(render_template('login_page_fail.html'))
-
     return render_template('login_page.html')
 
 @app.route('/userinfo', methods=['POST','GET'])
 def user_info():
-    return render_template('Home.html')
+    connection = sql.connect('database.db')
+    cursor = connection.cursor()
+
+
+
+    return render_template('user_info.html')
 
 def check_user_input(user_input_email, user_input_password):
     connection = sql.connect('database.db')
