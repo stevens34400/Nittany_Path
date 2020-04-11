@@ -356,6 +356,10 @@ def login():
 
     return render_template('login_page.html')
 
+@app.route('/userinfo', methods=['POST','GET'])
+def user_info():
+    return render_template('Home.html')
+
 def check_user_input(user_input_email, user_input_password):
     connection = sql.connect('database.db')
     cursor = connection.cursor()
