@@ -358,29 +358,88 @@ def login():
             return(render_template('login_page_fail.html'))
     return render_template('login_page.html')
 
+###USER INFO FUNCTIONALITY
 @app.route('/userinfo', methods=['POST','GET'])
 def user_info():
     connection = sql.connect('database.db')
     cursor = connection.cursor()
 
+    print("Global variable email input:", user_input_email)
 
+    ## Course description
+    cursor.execute('''SELECT e1.Student_Email, c1.Courses, c1.Course_Name
+                        FROM Enrolls e1, Course c1
+                        WHERE (e1.Student_Email = ? AND e1.Courses = c1.Courses)
+                        GROUP BY c1.Courses
+                        ''', (user_input_email,))
+    course_description = cursor.fetchall()
 
+    ## Proff contact
+    cursor.execute('''SELECT s1.Courses, s1.Teaching_Team_ID
+                        FROM Enrolls e1, Sections s1, Prof_teaching_teams pf1, Professors p1
+                        WHERE (e1.Student_Email = ?) AND e1.Courses = s1.Courses AND e1.Course_Section = s1.Course_Section /* AND s1.Teaching_Team_ID = pf1.Teaching_Team_ID*/
+                        GROUP BY s1.Courses
+                        ''',(user_input_email,))
+    prof_contact = cursor.fetchall()
+
+    ## Student info (everything from Students table)
+    cursor.execute('''SELECT *
+                        FROM Students
+                        WHERE Students.Student_Email = ?''',(user_input_email,))
+    student_info = cursor.fetchall()
+
+    ## Hw grade
+    cursor.execute('''SELECT e1.Courses, hw1.Course_HW_Grade
+                        FROM Enrolls e1, Homework_Grades hw1
+                        WHERE (e1.Student_Email = ? AND e1.Student_Email = hw1.Student_Email AND e1.Courses = hw1.Courses AND e1.Course_Section = hw1.Course_Section)
+                        ''',(user_input_email,))
+    hw_grades = cursor.fetchall()
+
+    ## Exam grade
+    cursor.execute('''SELECT e1.Courses, ex1.Course_Exam_Grade
+                            FROM Enrolls e1, Exam_Grades ex1
+                            WHERE (e1.Student_Email = ? AND e1.Student_Email = ex1.Student_Email AND e1.Courses = ex1.Courses AND e1.Course_Section = ex1.Course_Section)
+                            ''', (user_input_email,))
+    exam_grades = cursor.fetchall()
+
+    print("course description: ",course_description)
+    print("prof contact: ",prof_contact)
+    print("student info: ",student_info)
+    print("hw grade: ",hw_grades)
+    print("exam grade: ", exam_grades)
+
+    connection.commit()
     return render_template('user_info.html')
 
 def check_user_input(user_input_email, user_input_password):
     connection = sql.connect('database.db')
     cursor = connection.cursor()
 
-    cursor.execute('''SELECT Student_Email, Password
-                        FROM students_ta_csv
-                        WHERE Student_Email = ? AND Password = ?''', (user_input_email, user_input_password))
+    cursor.execute('''SELECT Student_Email
+                        FROM Students
+                        WHERE (Student_Email = ? AND Password = ?)''', (user_input_email, user_input_password))
     result = cursor.fetchall()
-    connection.commit()
 
+    # If result has an email, return true based of Students table checkup
     if result:
         return True
+    # Else, check the Professors table
     else:
-        return False
+        cursor.execute('''SELECT Professor_Email
+                        FROM Professors
+                        WHERE (Professor_Email = ? AND Password = ?) ''',(user_input_email,user_input_password))
+        result = cursor.fetchall()
+        connection.commit()
+
+        #If valid result from Professors table checkup, return true
+        if result:
+            return True
+        #If no value from both Students and Professors table check up, return false
+        else:
+            return False
+
+
+
 
 if __name__ == '__main__':
     app.run()

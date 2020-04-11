@@ -9,8 +9,26 @@
 </head>
 <body>
 <div class="container-sm">
-    <div class="card-body" align="center">
-        <p>Userinfo</p>
+    <div class="card-body">
+        <h2 class="card-title">Classes</h2>
+        <table class="table table-dark">
+            <tr>
+                <th scope="col">Email</th>
+                <th scope="col">Courses</th>
+                <th scope="col">Course Name</th>
+                <th scope="col">Course Section</th>
+            </tr>
+            <tbody>
+            {% for Student_Email, Courses, Course_Name, Course_Section in result %}
+                <tr>
+                    <td> {{ Student_Email }} </td>
+                    <td> {{ Courses }} </td>
+                    <td>{{ Course_Name }}</td>
+                    <td>{{ Course_Section }}</td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
     </div>
 </div>
 
