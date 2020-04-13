@@ -8,8 +8,6 @@ import hashlib
 
 from pandas import DataFrame
 
-
-
 app = Flask(__name__)
 
 host = 'http://127.0.0.1:5000/'
@@ -37,7 +35,7 @@ def index():
         'CREATE TABLE IF NOT EXISTS students_ta_csv(Full_Name TEXT, Student_Email TEXT PRIMARY KEY, Age INTEGER, Zip INTEGER , Phone TEXT, Gender TEXT, City TEXT, State TEXT, Password TEXT, Street TEXT, Major TEXT, Courses_1 TEXT, Course_1_Name TEXT, Course_1_Details TEXT, Course_1_Section TEXT, Course_1_Section_Limit TEXT, '
         'Course_1_HW_No INTEGER, Course_1_HW_Details TEXT, Course_1_HW_Grade INTEGER, Course_1_Exam_No INTEGER , Course_1_Exam_Details TEXT, Course_1_EXAM_Grade INTEGER, Courses_2 TEXT, Course_2_Name TEXT, Course_2_Details TEXT, Course_2_Section TEXT, Course_2_Section_Limit TEXT, Course_2_HW_No INTEGER, Course_2_HW_Details TEXT, '
         'Course_2_HW_Grade INTEGER, Course_2_Exam_No INTEGER , Course_2_Exam_Details TEXT, Course_2_EXAM_Grade INTEGER, Courses_3 TEXT, Course_3_Name TEXT, Course_3_Details TEXT, Course_3_Section TEXT, Course_3_Section_Limit TEXT, Course_3_HW_No INTEGER, Course_3_HW_Details TEXT, Course_3_HW_Grade INTEGER, Course_3_Exam_No INTEGER , '
-        'Course_3_Exam_Details TEXT, Course_3_EXAM_Grade INTEGER, Teaching_Team_ID INTEGER )')
+        'Course_3_Exam_Details TEXT, Course_3_EXAM_Grade INTEGER, Teaching_Team_ID INTEGER)')
     students_ta_csv = pd.read_csv('dataset/Students_TA.csv')
 
     df = pd.DataFrame(students_ta_csv)
@@ -85,7 +83,7 @@ def index():
     cursor.execute('''INSERT OR IGNORE INTO Students(Student_Email, Password, Full_Name, Age, Gender, Major, Street, Zip)
                         SELECT  Student_Email, Password, Full_Name, Age, Gender, Major, Street, Zip
                         FROM    students_ta_csv
-    ''')
+                        ''')
 
     ###CREATE AND FILL IN ZIPCODES TABLE
     cursor.execute('CREATE TABLE IF NOT EXISTS Zipcodes(Zip INTEGER PRIMARY KEY, City TEXT, State TEXT)')
@@ -199,7 +197,6 @@ def index():
                         SELECT  Professor_Email, Teaching_Team_ID
                         FROM    professor_csv
     ''')
-
 
     ###CREATE AND FILL IN TA_TEACHING_TEAMS
     cursor.execute('CREATE TABLE IF NOT EXISTS TA_teaching_teams(Student_Email TEXT PRIMARY KEY, Teaching_Team_ID INTEGER)')
@@ -367,7 +364,7 @@ def user_info():
     print("Global variable email input:", user_input_email)
 
     ## Course description
-    cursor.execute('''SELECT e1.Student_Email, c1.Courses, c1.Course_Name
+    cursor.execute('''SELECT c1.Courses, c1.Course_Name, e1.Course_Section
                         FROM Enrolls e1, Course c1
                         WHERE (e1.Student_Email = ? AND e1.Courses = c1.Courses)
                         GROUP BY c1.Courses
@@ -389,7 +386,7 @@ def user_info():
     student_info = cursor.fetchall()
 
     ## Hw grade
-    cursor.execute('''SELECT e1.Courses, hw1.Course_HW_Grade
+    cursor.execute('''SELECT hw1.Course_HW_Grade
                         FROM Enrolls e1, Homework_Grades hw1
                         WHERE (e1.Student_Email = ? AND e1.Student_Email = hw1.Student_Email AND e1.Courses = hw1.Courses AND e1.Course_Section = hw1.Course_Section)
                         ''',(user_input_email,))
@@ -407,9 +404,15 @@ def user_info():
     print("student info: ",student_info)
     print("hw grade: ",hw_grades)
     print("exam grade: ", exam_grades)
+    df=pd.DataFrame(course_description)
+    test=df.values.tolist(df)
+    print(test)
+
+    #test = [[course_description[i], hw_grades[i]] for i in range(0, len(course_description))]
+    #print("test: ", test)
 
     connection.commit()
-    return render_template('user_info.html')
+    return render_template('user_info.html', course_description=test, student_info=student_info)
 
 def check_user_input(user_input_email, user_input_password):
     connection = sql.connect('database.db')
