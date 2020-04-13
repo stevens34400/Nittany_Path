@@ -389,7 +389,7 @@ def user_info():
     student_info = cursor.fetchall()
 
     ## Hw grade
-    cursor.execute('''SELECT hw1.Course_HW_Grade
+    cursor.execute('''SELECT e1.Courses, hw1.Course_HW_Grade
                         FROM Enrolls e1, Homework_Grades hw1
                         WHERE (e1.Student_Email = ? AND e1.Student_Email = hw1.Student_Email AND e1.Courses = hw1.Courses AND e1.Course_Section = hw1.Course_Section)
                         ''',(user_input_email,))
@@ -407,21 +407,30 @@ def user_info():
     print("student info: ",student_info)
     print("hw grade: ",hw_grades)
     print("exam grade: ", exam_grades)
+    df_exam_grades = pd.DataFrame(exam_grades)
+    df_hw_grades = pd.DataFrame(hw_grades)
     df=pd.DataFrame(course_description)
-    
-    #Add in HW grade column into dataframe
-    df['HW_Grade']=hw_grades
-    #df['HW_Grade']=df['HW_Grade'].replace({"(" : ""},regex=True)
-    print(df['HW_Grade'])
-    test=df.values.tolist()
+
     print(df)
-    print(test)
+    print("Courses from course_description:\n",df[0])
+    print(df_hw_grades)
+    print("hw_grades")
+    print(df_exam_grades)
+
+    ##Add in HW grade column into dataframe
+    df['HW_Grade']=hw_grades
+    #df['Exam_Grade']=exam_grades
+    #df['HW_Grade']=df['HW_Grade'].replace({"(" : ""},regex=True)
+    #print(df['HW_Grade'])
+
+    test=df.values.tolist()
+    #print(test)
 
     #test = [[course_description[i], hw_grades[i]] for i in range(0, len(course_description))]
     #print("test: ", test)
 
     connection.commit()
-    return render_template('user_info.html', course_description=test, student_info=student_info)
+    return render_template('user_info.html', course_description=course_description, student_info=student_info)
 
 def check_user_input(user_input_email, user_input_password):
     connection = sql.connect('database.db')
