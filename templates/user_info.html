@@ -49,11 +49,12 @@
                 <th scope="col">HW Grade</th>
             </tr>
             <tbody>
-            {% for Courses, Course_Name, Course_Section in course_description %}
+            {% for Courses, Course_Name, Course_Section, HW_Grade in course_description %}
                 <tr>
                     <td> {{ Courses }} </td>
                     <td>{{ Course_Name }}</td>
                     <td>{{ Course_Section }}</td>
+                    <td>{{ HW_Grade }}</td>
                 </tr>
             {% endfor %}
             </tbody>

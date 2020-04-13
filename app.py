@@ -361,6 +361,9 @@ def user_info():
     connection = sql.connect('database.db')
     cursor = connection.cursor()
 
+    #Get rid of unwanted characters after obtaining string from fetchall()
+    remove_chars = ['(', ')', ',']
+
     print("Global variable email input:", user_input_email)
 
     ## Course description
@@ -405,7 +408,13 @@ def user_info():
     print("hw grade: ",hw_grades)
     print("exam grade: ", exam_grades)
     df=pd.DataFrame(course_description)
-    test=df.values.tolist(df)
+    
+    #Add in HW grade column into dataframe
+    df['HW_Grade']=hw_grades
+    #df['HW_Grade']=df['HW_Grade'].replace({"(" : ""},regex=True)
+    print(df['HW_Grade'])
+    test=df.values.tolist()
+    print(df)
     print(test)
 
     #test = [[course_description[i], hw_grades[i]] for i in range(0, len(course_description))]
