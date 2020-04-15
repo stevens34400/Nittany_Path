@@ -412,10 +412,28 @@ def user_info():
     df=pd.DataFrame(course_description)
 
     print(df)
-    print("Courses from course_description:\n",df[0])
-    print(df_hw_grades)
+
+    #only courses from course_description
+    df_description_course = df[0]
+
     print("hw_grades")
+    print(df_hw_grades)
+    print("exam_grades")
     print(df_exam_grades)
+    df_exam_grades_course = df_exam_grades[0]
+    #print(df_description_course[1])
+    #print(df_exam_grades_course[0])
+
+    # index for iteration
+    index1 = 0;
+    index2 = 0;
+    for i in df_description_course:
+        for x in df_exam_grades_course:
+            if()
+
+    #if(df_description_course[1]==df_exam_grades_course[0]):
+    #    print("yes")
+
 
     ##Add in HW grade column into dataframe
     df['HW_Grade']=hw_grades

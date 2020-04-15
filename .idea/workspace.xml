@@ -5,7 +5,6 @@
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app.py" beforeDir="false" afterPath="$PROJECT_DIR$/app.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/database.db" beforeDir="false" afterPath="$PROJECT_DIR$/database.db" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/templates/user_info.html" beforeDir="false" afterPath="$PROJECT_DIR$/templates/user_info.html" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -120,6 +119,7 @@
       <workItem from="1586656172490" duration="15104000" />
       <workItem from="1586783554028" duration="5045000" />
       <workItem from="1586790766909" duration="2081000" />
+      <workItem from="1586918271737" duration="1218000" />
     </task>
     <servers />
   </component>
@@ -142,22 +142,22 @@
       <screen x="0" y="0" width="1504" height="963" />
     </state>
     <state x="533" y="237" key="FileChooserDialogImpl/0.0.1504.963@0.0.1504.963" timestamp="1586613083635" />
-    <state width="1461" height="91" key="GridCell.Tab.0.bottom" timestamp="1586792892282">
+    <state width="1461" height="91" key="GridCell.Tab.0.bottom" timestamp="1586919563372">
       <screen x="0" y="0" width="1504" height="963" />
     </state>
-    <state width="1461" height="91" key="GridCell.Tab.0.bottom/0.0.1504.963@0.0.1504.963" timestamp="1586792892282" />
-    <state width="1461" height="91" key="GridCell.Tab.0.center" timestamp="1586792892282">
+    <state width="1461" height="91" key="GridCell.Tab.0.bottom/0.0.1504.963@0.0.1504.963" timestamp="1586919563372" />
+    <state width="1461" height="91" key="GridCell.Tab.0.center" timestamp="1586919563372">
       <screen x="0" y="0" width="1504" height="963" />
     </state>
-    <state width="1461" height="91" key="GridCell.Tab.0.center/0.0.1504.963@0.0.1504.963" timestamp="1586792892282" />
-    <state width="1461" height="91" key="GridCell.Tab.0.left" timestamp="1586792892281">
+    <state width="1461" height="91" key="GridCell.Tab.0.center/0.0.1504.963@0.0.1504.963" timestamp="1586919563372" />
+    <state width="1461" height="91" key="GridCell.Tab.0.left" timestamp="1586919563372">
       <screen x="0" y="0" width="1504" height="963" />
     </state>
-    <state width="1461" height="91" key="GridCell.Tab.0.left/0.0.1504.963@0.0.1504.963" timestamp="1586792892281" />
-    <state width="1461" height="91" key="GridCell.Tab.0.right" timestamp="1586792892282">
+    <state width="1461" height="91" key="GridCell.Tab.0.left/0.0.1504.963@0.0.1504.963" timestamp="1586919563372" />
+    <state width="1461" height="91" key="GridCell.Tab.0.right" timestamp="1586919563372">
       <screen x="0" y="0" width="1504" height="963" />
     </state>
-    <state width="1461" height="91" key="GridCell.Tab.0.right/0.0.1504.963@0.0.1504.963" timestamp="1586792892282" />
+    <state width="1461" height="91" key="GridCell.Tab.0.right/0.0.1504.963@0.0.1504.963" timestamp="1586919563372" />
     <state width="1461" height="317" key="GridCell.Tab.1.bottom" timestamp="1586624532638">
       <screen x="0" y="0" width="1504" height="963" />
     </state>
@@ -186,16 +186,16 @@
       <screen x="0" y="0" width="1504" height="963" />
     </state>
     <state x="462" y="123" key="com.intellij.database.view.ui.AbstractDbRefactoringDialog/0.0.1504.963@0.0.1504.963" timestamp="1585960035001" />
-    <state x="449" y="306" key="com.intellij.ide.util.TipDialog" timestamp="1586790766861">
+    <state x="449" y="306" key="com.intellij.ide.util.TipDialog" timestamp="1586918314544">
       <screen x="0" y="0" width="1504" height="963" />
     </state>
-    <state x="449" y="306" key="com.intellij.ide.util.TipDialog/0.0.1504.963@0.0.1504.963" timestamp="1586790766860" />
+    <state x="449" y="306" key="com.intellij.ide.util.TipDialog/0.0.1504.963@0.0.1504.963" timestamp="1586918314544" />
     <state x="415" y="206" width="672" height="678" key="search.everywhere.popup" timestamp="1586153905571">
       <screen x="0" y="0" width="1504" height="963" />
     </state>
     <state x="415" y="206" width="672" height="678" key="search.everywhere.popup/0.0.1504.963@0.0.1504.963" timestamp="1586153905571" />
   </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
-    <SUITE FILE_PATH="coverage/nittanypath$nittanypath.coverage" NAME="nittanypath Coverage Results" MODIFIED="1586792217551" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="" />
+    <SUITE FILE_PATH="coverage/nittanypath$nittanypath.coverage" NAME="nittanypath Coverage Results" MODIFIED="1586919563357" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="" />
   </component>
 </project>
