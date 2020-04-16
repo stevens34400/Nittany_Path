@@ -47,14 +47,21 @@
                 <th scope="col">Course Name</th>
                 <th scope="col">Course Section</th>
                 <th scope="col">HW Grade</th>
+                <th scope="col">Exam Grade</th>
+                <th scope="col">Professor Email</th>
+                <th scope="col">Office Address</th>
 
             </tr>
             <tbody>
-            {% for Courses, Course_Name, Course_Section in course_description %}
+            {% for Courses, Course_Name, Course_Section,HW_Grade, Exam_Grade, Professor_Email, Office_Address in course_description %}
                 <tr>
                     <td> {{ Courses }} </td>
                     <td>{{ Course_Name }}</td>
                     <td>{{ Course_Section }}</td>
+                    <td>{{ HW_Grade }}</td>
+                    <td>{{ Exam_Grade }}</td>
+                    <td>{{ Professor_Email }}</td>
+                    <td>{{ Office_Address }}</td>
                 </tr>
             {% endfor %}
             </tbody>

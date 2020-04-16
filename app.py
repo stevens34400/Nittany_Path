@@ -155,7 +155,7 @@ def index():
                     ''')
 
     ###CREATE AND FILL IN SECTIONS TABLE
-    cursor.execute('CREATE TABLE IF NOT EXISTS Sections(Courses TEXT, Course_Section TEXT, Course_Section_Limit TEXT,Teaching_Team_ID TEXT, PRIMARY KEY (Courses,Course_Section))')
+    cursor.execute('CREATE TABLE IF NOT EXISTS Sections(Courses TEXT, Course_Section TEXT, Course_Section_Limit TEXT,Teaching_Team_ID INTEGER, PRIMARY KEY (Courses,Course_Section))')
     #Insert Course, course section and course section limit all from students_ta_csv table
     cursor.execute('''INSERT OR IGNORE INTO Sections(Courses, Course_Section, Course_Section_Limit)
                       SELECT Courses_1, Course_1_Section, Course_1_Section_Limit 
@@ -192,7 +192,7 @@ def index():
                     ''')
 
     ###CREATE AND FILL IN PROF_TEACHING_TEAMS TABLE
-    cursor.execute('CREATE TABLE IF NOT EXISTS Prof_teaching_teams(Professor_Email TEXT PRIMARY KEY, Teaching_Team_ID)')
+    cursor.execute('CREATE TABLE IF NOT EXISTS Prof_teaching_teams(Professor_Email TEXT PRIMARY KEY, Teaching_Team_ID INTEGER)')
     cursor.execute('''INSERT OR IGNORE INTO Prof_teaching_teams(Professor_Email, Teaching_Team_ID)
                         SELECT  Professor_Email, Teaching_Team_ID
                         FROM    professor_csv
@@ -375,12 +375,14 @@ def user_info():
     course_description = cursor.fetchall()
 
     ## Proff contact
-    cursor.execute('''SELECT s1.Courses, s1.Teaching_Team_ID
+    cursor.execute('''SELECT p1.Professor_Email, p1.Office_Address
                         FROM Enrolls e1, Sections s1, Prof_teaching_teams pf1, Professors p1
-                        WHERE (e1.Student_Email = ?) AND e1.Courses = s1.Courses AND e1.Course_Section = s1.Course_Section /* AND s1.Teaching_Team_ID = pf1.Teaching_Team_ID*/
+                        WHERE (e1.Student_Email = ?) AND e1.Courses = s1.Courses AND e1.Course_Section = s1.Course_Section AND 
+                                s1.Teaching_Team_ID = pf1.Teaching_Team_ID AND pf1.Professor_Email = p1.Professor_Email
                         GROUP BY s1.Courses
                         ''',(user_input_email,))
     prof_contact = cursor.fetchall()
+
 
     ## Student info (everything from Students table)
     cursor.execute('''SELECT *
@@ -413,42 +415,92 @@ def user_info():
 
     print(df)
 
-    #only courses from course_description
+    #only courses column from course_description
+    #Note: all courses a student is taking
     df_description_course = df[0]
 
     print("hw_grades")
     print(df_hw_grades)
     print("exam_grades")
     print(df_exam_grades)
+    #Split hw_grades into two lists
+    df_hw_grades_course = df_hw_grades[0]
+    df_hw_grades_score = df_hw_grades [1]
+    #Split exam_grades into two lists
     df_exam_grades_course = df_exam_grades[0]
-    #print(df_description_course[1])
-    #print(df_exam_grades_course[0])
+    df_exam_grades_score = df_exam_grades[1]
 
-    # index for iteration
-    index1 = 0;
-    index2 = 0;
+    ###Algorithm to make sure that specified course has a HW grade
+    #List to append to final dataframe pushed to page
+    hw_scores = []
+
+    # indexes for iteration
+    index1 = 0;  # exam
+    index2 = 0;  # description
+    match = 0
+    #Compare every course taken by student to the courses that have homework (courses->hw_courses)
+    for i in df_description_course:
+        for x in df_hw_grades_course:
+            if (df_hw_grades_course[index1] == df_description_course[index2]):
+                match = index1+1
+                break;
+            #increment for description
+            index1 = index1 + 1
+
+        if match:
+            match = match-1
+            hw_scores.append(df_hw_grades_score[match])
+        else:
+            hw_scores.append('NULL')
+        index1 = 0
+        index2 = index2 + 1
+
+    print(hw_scores)
+
+
+    #Add in HW grade column into dataframe
+    df['HW_Grade']=hw_scores
+
+    ###Algorithm to make sure that specified course has a Exam grade
+    #exam score list to attach on final dataframe
+    exam_scores=[]
+
+    # indexes for iteration
+    index1 = 0;  # exam
+    index2 = 0;  # description
+    match = 0
     for i in df_description_course:
         for x in df_exam_grades_course:
-            if()
+            if (df_exam_grades_course[index1] == df_description_course[index2]):
+                match = index1+1
+                break;
+            #increment for description
+            index1 = index1 + 1
 
-    #if(df_description_course[1]==df_exam_grades_course[0]):
-    #    print("yes")
+        if match:
+            match = match-1
+            exam_scores.append(df_exam_grades_score[match])
+        else:
+            exam_scores.append('N/A')
+        index1 = 0
+        match = 0
+        index2 = index2 + 1
 
+    df['Exam_Grade']=exam_scores
 
-    ##Add in HW grade column into dataframe
-    df['HW_Grade']=hw_grades
-    #df['Exam_Grade']=exam_grades
-    #df['HW_Grade']=df['HW_Grade'].replace({"(" : ""},regex=True)
-    #print(df['HW_Grade'])
+    df_prof_contact = pd.DataFrame(prof_contact)
+    df['Professor_Email']=df_prof_contact[0]
+    df['Office_Address']=df_prof_contact[1]
+    print(df)
 
     test=df.values.tolist()
-    #print(test)
-
-    #test = [[course_description[i], hw_grades[i]] for i in range(0, len(course_description))]
-    #print("test: ", test)
 
     connection.commit()
-    return render_template('user_info.html', course_description=course_description, student_info=student_info)
+    return render_template('user_info.html', course_description=test, student_info=student_info)
+
+@app.route('/createpost', methods=['POST','GET'])
+def create_post():
+    return render_template('create_posts.html')
 
 def check_user_input(user_input_email, user_input_password):
     connection = sql.connect('database.db')
