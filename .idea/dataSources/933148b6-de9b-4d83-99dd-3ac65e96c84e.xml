@@ -643,7 +643,7 @@ Course_Section</ColNames>
     </column>
     <column id="153" parent="23" name="Unnamed:_6">
       <Position>7</Position>
-      <DataType>REAL|0s</DataType>
+      <DataType>TEXT|0s</DataType>
     </column>
     <column id="154" parent="23" name="Post_No">
       <Position>8</Position>

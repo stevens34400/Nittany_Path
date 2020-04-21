@@ -404,11 +404,11 @@ def user_info():
                             ''', (user_input_email,))
     exam_grades = cursor.fetchall()
 
-    print("course description: ",course_description)
-    print("prof contact: ",prof_contact)
-    print("student info: ",student_info)
-    print("hw grade: ",hw_grades)
-    print("exam grade: ", exam_grades)
+    #print("course description: ",course_description)
+    #print("prof contact: ",prof_contact)
+    #print("student info: ",student_info)
+    #print("hw grade: ",hw_grades)
+    #print("exam grade: ", exam_grades)
     df_exam_grades = pd.DataFrame(exam_grades)
     df_hw_grades = pd.DataFrame(hw_grades)
     df=pd.DataFrame(course_description)
@@ -419,10 +419,10 @@ def user_info():
     #Note: all courses a student is taking
     df_description_course = df[0]
 
-    print("hw_grades")
-    print(df_hw_grades)
-    print("exam_grades")
-    print(df_exam_grades)
+    #print("hw_grades")
+    #print(df_hw_grades)
+    #print("exam_grades")
+    #print(df_exam_grades)
     #Split hw_grades into two lists
     df_hw_grades_course = df_hw_grades[0]
     df_hw_grades_score = df_hw_grades [1]
@@ -491,16 +491,42 @@ def user_info():
     df_prof_contact = pd.DataFrame(prof_contact)
     df['Professor_Email']=df_prof_contact[0]
     df['Office_Address']=df_prof_contact[1]
-    print(df)
+    #print(df)
 
     test=df.values.tolist()
+    print(test)
+    print(student_info)
 
     connection.commit()
     return render_template('user_info.html', course_description=test, student_info=student_info)
 
 @app.route('/createpost', methods=['POST','GET'])
 def create_post():
-    return render_template('create_posts.html')
+    connection = sql.connect('database.db')
+    cursor = connection.cursor()
+
+    #user input email from global variable
+    courses = get_courses(user_input_email)
+    print(courses[0])
+    print(courses[1])
+    print(courses[2])
+
+    df_posts = pd.DataFrame()
+    for i in courses:
+        cursor.execute('''SELECT *
+                            FROM Posts p1
+                            WHERE p1.Courses=?''',i)
+        if(df_posts.empty):
+            df_posts = pd.DataFrame(cursor.fetchall())
+        else:
+            df_new_row = pd.DataFrame(cursor.fetchall())
+            df_posts = pd.concat([df_posts,df_new_row],ignore_index=True)
+
+    print(df_posts)
+
+    # print(posts)
+    df_posts = df_posts.values.tolist()
+    return render_template('create_posts.html', Posts = df_posts)
 
 def check_user_input(user_input_email, user_input_password):
     connection = sql.connect('database.db')
@@ -529,6 +555,18 @@ def check_user_input(user_input_email, user_input_password):
         else:
             return False
 
+def get_courses(email):
+    connection = sql.connect('database.db')
+    cursor = connection.cursor()
+
+    cursor.execute('''SELECT c1.Courses
+                            FROM Enrolls e1, Course c1
+                            WHERE (e1.Student_Email = ? AND e1.Courses = c1.Courses)
+                            GROUP BY c1.Courses
+                            ''', (email,))
+    course_description = cursor.fetchall()
+    connection.commit()
+    return(course_description)
 
 
 
