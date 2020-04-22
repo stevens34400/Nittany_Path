@@ -10,7 +10,41 @@
 <body>
 <div class="container-sm">
     <div class="card-body">
-        <h2 class="card-title">Create assignments</h2>
+        <h1 class="card-title">Assignments</h1>
+        <h2>{{ course1 }}</h2>
+        <table class="table table-dark">
+            <tr>
+                <th scope="col">Assignment</th>
+                <th scope="col">Assignment Number</th>
+                <th scope="col">Assignment Details</th>
+            </tr>
+            <tbody>
+            {% for Assignment, Assign_No, Assign_Details in assignment %}
+                <tr>
+                    <td>{{ Assignment }}</td>
+                    <td>{{ Assign_No }}</td>
+                    <td>{{ Assign_Details }}</td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+
+        <h3 class="card-title">Create Assignment</h3>
+        <form action="/createassignment" method="POST">
+            <div class="form-group">
+                <label for="Assignment">Assignment</label>
+                <input type="text" name="Assignment" required class="form-control">
+            </div>
+            <div class="form-group">
+                <label for="Assign_No">Assignment Number</label>
+                <input type="integer" name="Assign_No" required class="form-control">
+            </div>
+            <div class="form-group">
+                <label for="Assign_Detail">Assignment Detail</label>
+                <input type="text" name="Assign_Detail" required class="form-control">
+            </div>
+            <button type="submit" class="btn btn-primary">Insert</button>
+        </form>
     </div>
 </div>
 

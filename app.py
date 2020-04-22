@@ -7,6 +7,7 @@ import os
 import hashlib
 import re
 
+
 from pandas import DataFrame
 
 app = Flask(__name__)
@@ -572,11 +573,65 @@ def create_post():
                            course1_posts=df_course1_posts,course2_posts=df_course2_posts,course2_comments=comments_course2[0],course3_posts=df_course3_posts)
 
 @app.route('/createassignment',methods=['POST','GET'])
-def create_assignment():
+def create():
     connection = sql.connect('database.db')
     cursor = connection.cursor()
-    print(user_input_email)
-    return render_template('create_assignment.html')
+    cursor.execute('''SELECT p1.Course
+                        FROM Professors p1
+                        WHERE p1.Professor_Email = ?''',(user_input_email,))
+    #Obtain course he's teaching
+    course_teaching = cursor.fetchall()
+
+    # Show all assignments already in course
+    cursor.execute('''SELECT e1.Course_Exam_No, e1.Course_Exam_Details
+                        FROM Exams e1
+                        WHERE e1.Courses = ?
+                        GROUP BY e1.Courses''',course_teaching[0])
+    exams = cursor.fetchall()
+    df_exams = pd.DataFrame(exams)
+    #Also insert assignment tag
+    df_exams.insert(0,"Assignment","Exam",True)
+
+    cursor.execute('''SELECT h1.Course_HW_No, h1.Course_HW_Details
+                        FROM Homework h1
+                        WHERE h1.Courses = ?
+                        GROUP BY h1.Course_HW_No''',course_teaching[0])
+    homework = cursor.fetchall()
+    df_homework = pd.DataFrame(homework)
+    #Also insert assignment tag
+    df_homework.insert(0,"Assignment","Homework",True)
+
+    df_assign = df_exams.append(df_homework)
+    df_assign = df_assign.values.tolist()
+
+    if request.method == 'POST':
+        #Obtain user input for new assignment
+        assign_type = request.form['Assignment']
+        assign_no = request.form['Assign_No']
+        assign_detail = request.form['Assign_Detail']
+
+        #If prof decides to add a new homework
+        if(assign_type=="Homework"):
+            #function used to just insert new element into table
+            enter_homework(course_teaching,assign_no,assign_detail)
+
+            cursor.execute('''SELECT h1.Course_HW_No, h1.Course_HW_Details
+                                    FROM Homework h1
+                                    WHERE h1.Courses = ?
+                                    GROUP BY h1.Course_HW_No''', course_teaching[0])
+            new_homework = cursor.fetchall()
+            df_new_homework = pd.DataFrame(new_homework)
+            # Also insert assignment tag
+            df_new_homework.insert(0, "Assignment", "Homework", True)
+            df_new_homework = df_new_homework.values.tolist()
+            df_exams = df_exams.values.tolist()
+            df_assign = df_exams+df_new_homework
+            return render_template('create_assignment.html',course1=course_teaching[0][0], assignment=df_assign)
+        else:
+            print("fail")
+
+    connection.commit()
+    return render_template('create_assignment.html',course1=course_teaching[0][0],assignment=df_assign)
 
 def check_user_input_student(user_input_email, user_input_password):
     connection = sql.connect('database.db')
@@ -623,6 +678,16 @@ def get_courses(email):
     connection.commit()
     return(course_description)
 
+def enter_homework(course_teaching, assign_no, assign_detail):
+    connection = sql.connect('database.db')
+    cursor = connection.cursor()
+    cursor.execute('''INSERT INTO Homework(Courses,Course_HW_No,Course_HW_Details) VALUES (?,?,?);'''
+                   , (course_teaching[0][0], assign_no, assign_detail))
+    connection.commit()
+    # cursor.execute(''' SELECT Course_HW_No, Course_HW_Details
+    #                     FROM Homework
+    #                     WHERE Courses = ?
+    #                     GROUP BY Course_HW_No''',course_teaching[0])
 
 
 if __name__ == '__main__':
