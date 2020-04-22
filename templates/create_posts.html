@@ -42,6 +42,22 @@
                                 <td>{{ Post_No }}</td>
                                 <td>{{Post_Info}}</td>
                                 <td>{{ Student_Email }}</td>
+
+                                <table class="table table-dark">
+                                    <tr>
+                                        <th scope="col">Comment Number</th>
+                                        <th scope="col">Comment Information</th>
+                                        <th scope="col">By</th>
+                                    </tr>
+                                    <tbody>
+                                        {% for Comment_No, Comment_Info, Student_Email in course2_comments %}
+                                            <td>{{ Comment_No }}</td>
+                                            <td>{{ Comment_Info }}</td>
+                                            <td>{{ Student_Email }}</td>
+                                        {% endfor %}
+                                    </tbody>
+
+                                </table>
                             </tr>
                         {% endfor %}
                     </tbody>

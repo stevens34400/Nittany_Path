@@ -513,53 +513,61 @@ def create_post():
     print(courses[2])
 
     #Posts and info from course 1
-    cursor.execute('''SELECT p1.Post_No, p1.Post_Info, p1.Student_Email
+    cursor.execute('''SELECT *
                                 FROM Posts p1
                                 WHERE p1.Courses=?''', courses[0])
     course_1 = cursor.fetchall()
     df_course1_posts = pd.DataFrame(course_1)
+    if (df_course1_posts.empty==False):
+        df_course1_posts = df_course1_posts.drop(columns=0)
     df_course1_posts = df_course1_posts.values.tolist()
-    print(df_course1_posts)
+    # print(df_course1_posts)
 
     #Posts and info from course 2
-    cursor.execute('''SELECT p1.Post_No, p1.Post_Info, p1.Student_Email
+    cursor.execute('''SELECT *
                                     FROM Posts p1
                                     WHERE p1.Courses=?''', courses[1])
-    course_2 = cursor.fetchall()
-    df_course2_posts = pd.DataFrame(course_2)
+    course_2_posts = cursor.fetchall()
+    df_course2_posts = pd.DataFrame(course_2_posts)
+    if (df_course2_posts.empty == False):
+        df_course2_posts = df_course2_posts.drop(columns=0)
     df_course2_posts = df_course2_posts.values.tolist()
-    print(df_course2_posts)
+    # print(df_course2_posts)
 
     #Obtain comments from all posts of course 2
+    df_course2_posts_comments = pd.DataFrame(course_2_posts)
+    df_course2_posts_comments = df_course2_posts_comments.values.tolist()
+    print(df_course2_posts_comments)
+    index = 0
+    comments_course2 = []
+    # iteration through number of posts
+    for i in df_course2_posts_comments:
+        cursor.execute('''SELECT c1.Comment_No, c1.Comment_Info, c1.Student_Email
+                            FROM Comments c1
+                            WHERE c1.Courses = ? AND Post_No = ?''',(df_course2_posts_comments[0][0],df_course2_posts_comments[index][1]))
+        index=index+1
+        comments_course2.append(cursor.fetchall())
+    print(comments_course2[1])
+    #comments_course2 [post_no]-[comment_no]-[element]
+
+    index = 0
+    for i in comments_course2:
+        index = index+1
+    print(index)
 
 
     #Posts from course 3
-    cursor.execute('''SELECT p1.Post_No, p1.Post_Info, p1.Student_Email
+    cursor.execute('''SELECT *
                                     FROM Posts p1
                                     WHERE p1.Courses=?''', courses[2])
     course_3 = cursor.fetchall()
     df_course3_posts = pd.DataFrame(course_3)
+    if (df_course3_posts.empty == False):
+        df_course3_posts = df_course3_posts.drop(columns=0)
     df_course3_posts = df_course3_posts.values.tolist()
-    print(course_3)
-
-    # df_posts = pd.DataFrame()
-    # for i in courses:
-    #     cursor.execute('''SELECT *
-    #                         FROM Posts p1
-    #                         WHERE p1.Courses=?''',i)
-    #     if(df_posts.empty):
-    #         df_posts = pd.DataFrame(cursor.fetchall())
-    #     else:
-    #         df_new_row = pd.DataFrame(cursor.fetchall())
-    #         df_posts = pd.concat([df_posts,df_new_row],ignore_index=True)
-    #
-    # print(df_posts)
-    #
-    # # print(posts)
-    # df_posts = df_posts.values.tolist()
 
     return render_template('create_posts.html', course1=courses[0][0], course2=courses[1][0], course3=courses[2][0],
-                           course1_posts=df_course1_posts,course2_posts=df_course2_posts,course3_posts=df_course3_posts)
+                           course1_posts=df_course1_posts,course2_posts=df_course2_posts,course2_comments=comments_course2[0],course3_posts=df_course3_posts)
 
 def check_user_input(user_input_email, user_input_password):
     connection = sql.connect('database.db')
