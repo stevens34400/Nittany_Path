@@ -5,6 +5,7 @@ import sqlite3 as sql
 import pandas as pd
 import os
 import hashlib
+import re
 
 from pandas import DataFrame
 
@@ -511,22 +512,54 @@ def create_post():
     print(courses[1])
     print(courses[2])
 
-    df_posts = pd.DataFrame()
-    for i in courses:
-        cursor.execute('''SELECT *
-                            FROM Posts p1
-                            WHERE p1.Courses=?''',i)
-        if(df_posts.empty):
-            df_posts = pd.DataFrame(cursor.fetchall())
-        else:
-            df_new_row = pd.DataFrame(cursor.fetchall())
-            df_posts = pd.concat([df_posts,df_new_row],ignore_index=True)
+    #Posts and info from course 1
+    cursor.execute('''SELECT p1.Post_No, p1.Post_Info, p1.Student_Email
+                                FROM Posts p1
+                                WHERE p1.Courses=?''', courses[0])
+    course_1 = cursor.fetchall()
+    df_course1_posts = pd.DataFrame(course_1)
+    df_course1_posts = df_course1_posts.values.tolist()
+    print(df_course1_posts)
 
-    print(df_posts)
+    #Posts and info from course 2
+    cursor.execute('''SELECT p1.Post_No, p1.Post_Info, p1.Student_Email
+                                    FROM Posts p1
+                                    WHERE p1.Courses=?''', courses[1])
+    course_2 = cursor.fetchall()
+    df_course2_posts = pd.DataFrame(course_2)
+    df_course2_posts = df_course2_posts.values.tolist()
+    print(df_course2_posts)
 
-    # print(posts)
-    df_posts = df_posts.values.tolist()
-    return render_template('create_posts.html', Posts = df_posts)
+    #Obtain comments from all posts of course 2
+
+
+    #Posts from course 3
+    cursor.execute('''SELECT p1.Post_No, p1.Post_Info, p1.Student_Email
+                                    FROM Posts p1
+                                    WHERE p1.Courses=?''', courses[2])
+    course_3 = cursor.fetchall()
+    df_course3_posts = pd.DataFrame(course_3)
+    df_course3_posts = df_course3_posts.values.tolist()
+    print(course_3)
+
+    # df_posts = pd.DataFrame()
+    # for i in courses:
+    #     cursor.execute('''SELECT *
+    #                         FROM Posts p1
+    #                         WHERE p1.Courses=?''',i)
+    #     if(df_posts.empty):
+    #         df_posts = pd.DataFrame(cursor.fetchall())
+    #     else:
+    #         df_new_row = pd.DataFrame(cursor.fetchall())
+    #         df_posts = pd.concat([df_posts,df_new_row],ignore_index=True)
+    #
+    # print(df_posts)
+    #
+    # # print(posts)
+    # df_posts = df_posts.values.tolist()
+
+    return render_template('create_posts.html', course1=courses[0][0], course2=courses[1][0], course3=courses[2][0],
+                           course1_posts=df_course1_posts,course2_posts=df_course2_posts,course3_posts=df_course3_posts)
 
 def check_user_input(user_input_email, user_input_password):
     connection = sql.connect('database.db')
