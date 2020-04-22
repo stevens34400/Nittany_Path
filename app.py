@@ -335,10 +335,15 @@ def login():
         user_input_email = (request.form['Email'])
         user_input_password = request.form['Password']
 
+        user_input_student_checked = check_user_input_student(user_input_email, user_input_password)
+        user_input_prof_checked = check_user_input_prof(user_input_email,user_input_password)
 
-        #Used to check hash in database (method-1)
-        user_input_checked = check_user_input(user_input_email, user_input_password)
-
+        if user_input_student_checked:
+            return (render_template('Home_Student.html'))
+        if (user_input_prof_checked):
+            return (render_template('Home_Prof.html'))
+        else:
+            return(render_template('login_page_fail.html'))
 
         """
         #Check hash table (method-2)
@@ -350,10 +355,7 @@ def login():
         print(new_key)
         """
 
-        if user_input_checked:
-            return (render_template('Home.html'))
-        else:
-            return(render_template('login_page_fail.html'))
+
     return render_template('login_page.html')
 
 ###USER INFO FUNCTIONALITY
@@ -569,7 +571,14 @@ def create_post():
     return render_template('create_posts.html', course1=courses[0][0], course2=courses[1][0], course3=courses[2][0],
                            course1_posts=df_course1_posts,course2_posts=df_course2_posts,course2_comments=comments_course2[0],course3_posts=df_course3_posts)
 
-def check_user_input(user_input_email, user_input_password):
+@app.route('/createassignment',methods=['POST','GET'])
+def create_assignment():
+    connection = sql.connect('database.db')
+    cursor = connection.cursor()
+    print(user_input_email)
+    return render_template('create_assignment.html')
+
+def check_user_input_student(user_input_email, user_input_password):
     connection = sql.connect('database.db')
     cursor = connection.cursor()
 
@@ -581,20 +590,25 @@ def check_user_input(user_input_email, user_input_password):
     # If result has an email, return true based of Students table checkup
     if result:
         return True
-    # Else, check the Professors table
+    # Else, return false
     else:
-        cursor.execute('''SELECT Professor_Email
-                        FROM Professors
-                        WHERE (Professor_Email = ? AND Password = ?) ''',(user_input_email,user_input_password))
-        result = cursor.fetchall()
-        connection.commit()
+        return False
 
-        #If valid result from Professors table checkup, return true
-        if result:
-            return True
-        #If no value from both Students and Professors table check up, return false
-        else:
-            return False
+def check_user_input_prof(user_input_email, user_input_password):
+    connection = sql.connect('database.db')
+    cursor = connection.cursor()
+    cursor.execute('''SELECT Professor_Email
+                        FROM Professors
+                        WHERE Professor_Email = ? AND Password = ?''',(user_input_email,user_input_password))
+    result = cursor.fetchall()
+    connection.commit()
+
+    # If valid result from Professors table checkup, return true
+    if result:
+        return True
+    # If no value from both Students and Professors table check up, return false
+    else:
+        return False
 
 def get_courses(email):
     connection = sql.connect('database.db')
