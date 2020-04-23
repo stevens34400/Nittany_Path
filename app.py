@@ -339,9 +339,6 @@ def index():
 
     print(cursor.fetchall())
     connection.commit()
-
-
-
     return render_template('index.html')
 
 @app.route('/login', methods=['POST','GET'])
@@ -372,8 +369,6 @@ def login():
         new_key = hashlib.pbkdf2_hmac('sha256',user_input_password.encode('utf-8'),salt,100000)
         print(new_key)
         """
-
-
     return render_template('login_page.html')
 
 ###USER INFO FUNCTIONALITY
