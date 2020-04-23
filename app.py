@@ -759,7 +759,6 @@ def submitscores():
                                 WHERE p1.Professor_Email = ?''', (user_input_email,))
     # Obtain course he's teaching
     course_teaching = cursor.fetchall()
-    print(course_teaching[0][0])
     return render_template('submit_scores.html',course=course_teaching[0][0])
 
 @app.route('/submitscorehw',methods=['POST','GET'])
@@ -790,10 +789,22 @@ def submitscoreshw():
                             FROM Homework_Grades hg1
                             WHERE hg1.Courses = ? AND hg1.Course_HW_No = ?''',(course_teaching[0][0],hw_no))
         student_hw_grade = cursor.fetchall()
-        return render_template('submit_scores_hw.html',tvalues=df_course_hw_no,student_hw_grade=student_hw_grade,hw_no=hw_no,course=course_teaching[0][0])
+        df_student_email = pd.DataFrame(student_hw_grade)
+        df_student_email = df_student_email.drop(columns=1)
+        df_student_email = df_student_email[0].values.tolist()
+        print(df_student_email)
+        return render_template('submit_scores_hw.html',emails=df_student_email,tvalues=df_course_hw_no,student_hw_grade=student_hw_grade,hw_no=hw_no,course=course_teaching[0][0])
 
     connection.commit()
     return render_template('submit_scores_hw.html',tvalues=df_course_hw_no,course=course_teaching[0][0])
+
+#Allow to change grade of specific student email
+@app.route('/changegrade',methods=['POST','GET'])
+def test():
+    connection = sql.connect('database.db')
+    cursor=connection.cursor()
+    print(request.form['email'])
+    return render_template('submit_scores_hw.html')
 
 @app.route('/submitscoreexam',methods=['POST','GET'])
 def submitscoreexam():
