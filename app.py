@@ -749,6 +749,48 @@ def createexam():
     connection.commit()
     return render_template('create_exam.html',course1=course_teaching[0][0],assignment=df_assign)
 
+@app.route('/submitscore',methods=['POST','GET'])
+def submitscores():
+    return render_template('submit_scores.html')
+
+@app.route('/submitscorehw',methods=['POST','GET'])
+def submitscoreshw():
+    connection = sql.connect('database.db')
+    cursor = connection.cursor()
+    print(user_input_email)
+    #Obtain class prof is teaching
+    cursor.execute('''SELECT p1.Course
+                            FROM Professors p1
+                            WHERE p1.Professor_Email = ?''', (user_input_email,))
+    # Obtain course he's teaching
+    course_teaching = cursor.fetchall()
+    print(course_teaching[0][0])
+
+    #Obtain number of assignments for hw
+    cursor.execute('''SELECT h1.Course_HW_No
+                        FROM Homework h1
+                        WHERE h1.Courses = ?
+                        GROUP BY h1.Course_HW_No''',course_teaching[0])
+    course_hw_no = cursor.fetchall()
+    df_course_hw_no = pd.DataFrame(course_hw_no)
+    df_course_hw_no = df_course_hw_no[0].values.tolist()
+
+    #Obtain user selection for which hw to show
+    if request.method == 'POST':
+        hw_no = request.form['tvalue']
+        cursor.execute('''SELECT hg1.Student_Email, hg1.Course_HW_Grade
+                            FROM Homework_Grades hg1
+                            WHERE hg1.Courses = ? AND hg1.Course_HW_No = ?''',(course_teaching[0][0],hw_no))
+        student_hw_grade = cursor.fetchall()
+        return render_template('submit_scores_hw.html',tvalues=df_course_hw_no,student_hw_grade=student_hw_grade,hw_no=hw_no)
+
+    connection.commit()
+    return render_template('submit_scores_hw.html',tvalues=df_course_hw_no)
+
+@app.route('/submitscoreexam',methods=['POST','GET'])
+def submitscoreexam():
+    return render_template('submit_scores.html')
+
 def check_user_input_student(user_input_email, user_input_password):
     connection = sql.connect('database.db')
     cursor = connection.cursor()
