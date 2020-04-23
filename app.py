@@ -751,20 +751,28 @@ def createexam():
 
 @app.route('/submitscore',methods=['POST','GET'])
 def submitscores():
-    return render_template('submit_scores.html')
+    connection = sql.connect('database.db')
+    cursor = connection.cursor()
+    # Obtain class prof is teaching
+    cursor.execute('''SELECT p1.Course
+                                FROM Professors p1
+                                WHERE p1.Professor_Email = ?''', (user_input_email,))
+    # Obtain course he's teaching
+    course_teaching = cursor.fetchall()
+    print(course_teaching[0][0])
+    return render_template('submit_scores.html',course=course_teaching[0][0])
 
 @app.route('/submitscorehw',methods=['POST','GET'])
 def submitscoreshw():
     connection = sql.connect('database.db')
     cursor = connection.cursor()
-    print(user_input_email)
+
     #Obtain class prof is teaching
     cursor.execute('''SELECT p1.Course
                             FROM Professors p1
                             WHERE p1.Professor_Email = ?''', (user_input_email,))
     # Obtain course he's teaching
     course_teaching = cursor.fetchall()
-    print(course_teaching[0][0])
 
     #Obtain number of assignments for hw
     cursor.execute('''SELECT h1.Course_HW_No
@@ -782,14 +790,45 @@ def submitscoreshw():
                             FROM Homework_Grades hg1
                             WHERE hg1.Courses = ? AND hg1.Course_HW_No = ?''',(course_teaching[0][0],hw_no))
         student_hw_grade = cursor.fetchall()
-        return render_template('submit_scores_hw.html',tvalues=df_course_hw_no,student_hw_grade=student_hw_grade,hw_no=hw_no)
+        return render_template('submit_scores_hw.html',tvalues=df_course_hw_no,student_hw_grade=student_hw_grade,hw_no=hw_no,course=course_teaching[0][0])
 
     connection.commit()
-    return render_template('submit_scores_hw.html',tvalues=df_course_hw_no)
+    return render_template('submit_scores_hw.html',tvalues=df_course_hw_no,course=course_teaching[0][0])
 
 @app.route('/submitscoreexam',methods=['POST','GET'])
 def submitscoreexam():
-    return render_template('submit_scores.html')
+    connection = sql.connect('database.db')
+    cursor = connection.cursor()
+
+    # Obtain class prof is teaching
+    cursor.execute('''SELECT p1.Course
+                                FROM Professors p1
+                                WHERE p1.Professor_Email = ?''', (user_input_email,))
+    # Obtain course he's teaching
+    course_teaching = cursor.fetchall()
+
+    # Obtain number of assignments for exam
+    cursor.execute('''SELECT e1.Course_Exam_No
+                            FROM Exams e1
+                            WHERE e1.Courses = ?
+                            GROUP BY e1.Course_Exam_No''', course_teaching[0])
+    course_exam_no = cursor.fetchall()
+    df_course_exam_no = pd.DataFrame(course_exam_no)
+    df_course_exam_no = df_course_exam_no[0].values.tolist()
+
+    # Obtain user selection for which hw to show
+    if request.method == 'POST':
+        exam_no = request.form['tvalue']
+        cursor.execute('''SELECT eg1.Student_Email, eg1.Course_Exam_Grade
+                                FROM Exam_Grades eg1
+                                WHERE eg1.Courses = ? AND eg1.Course_Exam_No = ?''', (course_teaching[0][0], exam_no))
+        student_exam_grade = cursor.fetchall()
+        return render_template('submit_scores_exam.html', tvalues=df_course_exam_no, student_exam_grade=student_exam_grade,
+                               exam_no=exam_no,course=course_teaching[0][0])
+
+    connection.commit()
+    return render_template('submit_scores_exam.html', tvalues=df_course_exam_no,course=course_teaching[0][0])
+
 
 def check_user_input_student(user_input_email, user_input_password):
     connection = sql.connect('database.db')
