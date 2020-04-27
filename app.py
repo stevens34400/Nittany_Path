@@ -516,6 +516,18 @@ def user_info():
     connection.commit()
     return render_template('user_info.html', course_description=test, student_info=student_info)
 
+@app.route('/createpostcourse',methods=['POST','GET'])
+def create_post_course():
+    connection = sql.connect('database.db')
+    cursor = connection.cursor()
+    courses = get_courses(user_input_email)
+    df_courses = pd.DataFrame(courses)
+    df_courses = df_courses[0].values.tolist()
+    print(df_courses)
+
+
+    return render_template('create_posts_course.html',courses=df_courses)
+
 @app.route('/createpost', methods=['POST','GET'])
 def create_post():
     connection = sql.connect('database.db')
@@ -523,80 +535,100 @@ def create_post():
 
     #user input email from global variable
     courses = get_courses(user_input_email)
-    print(courses[0])
-    print(courses[1])
-    print(courses[2])
+    # print(courses[0])
+    # print(courses[1])
+    # print(courses[2])
 
-    #Posts and info from course 1
-    cursor.execute('''SELECT *
-                                FROM Posts p1
-                                WHERE p1.Courses=?''', courses[0])
-    course_1 = cursor.fetchall()
-    df_course1_posts = pd.DataFrame(course_1)
-    if (df_course1_posts.empty==False):
-        df_course1_posts = df_course1_posts.drop(columns=0)
-    df_course1_posts = df_course1_posts.values.tolist()
 
-    #Posts and info from course 2
-    cursor.execute('''SELECT *
+    if request.method == 'POST' :
+        selected_course=request.form['Course']
+
+
+    ##User selects course 1
+    if (selected_course==courses[0][0]):
+        #Posts and info from course 1
+        cursor.execute('''SELECT *
                                     FROM Posts p1
-                                    WHERE p1.Courses=?''', courses[1])
-    course_2_posts = cursor.fetchall()
-    df_course2_posts = pd.DataFrame(course_2_posts)
-    if (df_course2_posts.empty == False):
-        df_course2_posts = df_course2_posts.drop(columns=0)
-    df_course2_posts = df_course2_posts.values.tolist()
-    print(df_course2_posts)
+                                    WHERE p1.Courses=?''', courses[0])
+        course_1 = cursor.fetchall()
+        df_course_posts = pd.DataFrame(course_1)
+        #If there are posts delete the course column
+        if (df_course_posts.empty==False):
+            df_course_posts = df_course_posts.drop(columns=0)
+        df_course_posts = df_course_posts.values.tolist()
+        print('course1')
+        return render_template('create_posts.html', course=selected_course, course_posts=df_course_posts)
 
-    #All posts from course 2 including course attribute
-    df_course2_posts_course = pd.DataFrame(course_2_posts)
-    df_course2_posts_course = df_course2_posts_course.values.tolist()
-    print(df_course2_posts_course)
+    ##User selects course 2
+    if (selected_course==courses[1][0]):
+        #Posts and info from course 2
+        cursor.execute('''SELECT *
+                                        FROM Posts p1
+                                        WHERE p1.Courses=?''', courses[1])
+        course_2_posts = cursor.fetchall()
+        df_course_posts = pd.DataFrame(course_2_posts)
+        # If there are posts delete the course column
+        if (df_course_posts.empty == False):
+            df_course_posts = df_course_posts.drop(columns=0)
+        df_course_posts = df_course_posts.values.tolist()
+        print(df_course_posts)
 
-    index = 0
-    comments_course2 = []
-    # iteration through number of posts
-    for i in df_course2_posts_course:
-        cursor.execute('''SELECT c1.Post_No, c1.Comment_No, c1.Comment_Info, c1.Student_Email
-                            FROM Comments c1
-                            WHERE c1.Courses = ? AND Post_No = ?''',(df_course2_posts_course[0][0],df_course2_posts_course[index][1]))
-        index=index+1
-        comments_course2.append(cursor.fetchall())
-    # comments_course2 [Post No]-[comment_no]-[element]
+        #All posts from course 2 including course attribute
+        df_course_posts_course = pd.DataFrame(course_2_posts)
+        df_course_posts_course = df_course_posts_course.values.tolist()
+        print(df_course_posts_course)
 
-    index = 0
-    #Iterate through post no
-    df_course2_comments = pd.DataFrame()
-    for posts in comments_course2:
-        print(posts)
-        index_comments = 0
-        # df_course2_comments = pd.DataFrame(index+1,columns="Post Number")
-        df_course2_comments= df_course2_comments.append(posts,ignore_index=True)
-        #iterate through comment no on specific post no
-        for comments in comments_course2[index]:
-            print('comment: ',comments)
-            print('test: ',comments_course2[0])
-            index_comments=index_comments+1
-            index = index+1
-            # df_course2_comments.append(comments)
-    print(df_course2_comments)
-    df_course2_comments = df_course2_comments.values.tolist()
-    print(df_course2_comments)
+        index = 0
+        comments_course2 = []
+        # iteration through number of posts
+        for i in df_course_posts_course:
+            cursor.execute('''SELECT c1.Post_No, c1.Comment_No, c1.Comment_Info, c1.Student_Email
+                                FROM Comments c1
+                                WHERE c1.Courses = ? AND Post_No = ?''',(df_course_posts_course[0][0],df_course_posts_course[index][1]))
+            index=index+1
+            comments_course2.append(cursor.fetchall())
+        # comments_course2 [Post No]-[comment_no]-[element]
+
+        index = 0
+        #Iterate through post no
+        df_course_comments = pd.DataFrame()
+        for posts in comments_course2:
+            print(posts)
+            index_comments = 0
+            # df_course2_comments = pd.DataFrame(index+1,columns="Post Number")
+            df_course_comments= df_course_comments.append(posts,ignore_index=True)
+            #iterate through comment no on specific post no
+            for comments in comments_course2[index]:
+                print('comment: ',comments)
+                print('test: ',comments_course2[0])
+                index_comments=index_comments+1
+                index = index+1
+                # df_course2_comments.append(comments)
+        print(df_course_comments)
+        df_course_comments = df_course_comments.values.tolist()
+        print(df_course_comments)
+        print('course2')
+
+        return render_template('create_posts.html',course=selected_course,course_posts=df_course_posts,course_comments=df_course_comments)
+
+    ##User selects course 3
+    if (selected_course==courses[2][0]):
+        #Posts from course 3
+        cursor.execute('''SELECT *
+                                        FROM Posts p1
+                                        WHERE p1.Courses=?''', courses[2])
+        course_3_posts = cursor.fetchall()
+        df_course_posts = pd.DataFrame(course_3_posts)
+        # If there are posts delete the course column
+        if (df_course_posts.empty == False):
+            df_course_posts = df_course_posts.drop(columns=0)
+        df_course_posts = df_course_posts.values.tolist()
+        print('course3')
+
+        return render_template('create_posts.html', course=selected_course, course_posts=df_course_posts)
 
 
-
-    #Posts from course 3
-    cursor.execute('''SELECT *
-                                    FROM Posts p1
-                                    WHERE p1.Courses=?''', courses[2])
-    course_3 = cursor.fetchall()
-    df_course3_posts = pd.DataFrame(course_3)
-    if (df_course3_posts.empty == False):
-        df_course3_posts = df_course3_posts.drop(columns=0)
-    df_course3_posts = df_course3_posts.values.tolist()
-
-    return render_template('create_posts.html', course1=courses[0][0], course2=courses[1][0], course3=courses[2][0],
-                           course1_posts=df_course1_posts,course2_posts=df_course2_posts,course2_comments=df_course2_comments,course3_posts=df_course3_posts)
+    return render_template('create_posts.html')
 
 #Link to show the assignments already in tables used
 @app.route('/createassignment',methods=['POST','GET'])

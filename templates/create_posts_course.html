@@ -46,26 +46,14 @@
 <body>
 <div class="container-sm">
     <div class="card-body">
-        <h2 class="card-title">Create Posts</h2>
-            <body>
-                <h1>{{ course }}</h1>
-                    <tbody>
-                    {% for Post_No, Post_Info, Student_Email in course_posts %}
-                        <b>Post {{ Post_No }}</b>
-                        <b>{{Post_Info}}</b>
-                        <b>{{ Student_Email }}</b>
-                        <div>
-                            {% for Post_No_comment, Comment_No, Comment_Info, Student_Email in course_comments %}
-                                {% if Post_No_comment == Post_No %}
-                                    <b><p>Comment {{ Comment_No }}</p></b>
-                                    <td>{{ Comment_Info }}</td>
-                                    <td>{{ Student_Email }}</td>
-                                {% endif %}
-                        {% endfor %}
-                        </div>
-                    {% endfor %}
-                    </tbody>
-            </body>
+        <form action="/createpost" method="POST">
+            <select name="Course">
+                {% for course in courses %}
+                    <option value = "{{ course }}" selected='selected'>{{ course }}</option>
+                {% endfor %}
+            </select>
+            <input type="submit" value="Submit" />
+        </form>
     </div>
 </div>
 
