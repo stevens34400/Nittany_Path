@@ -49,6 +49,10 @@
         <h2 class="card-title">Create Posts</h2>
             <body>
                 <h1>{{ course }}</h1>
+                    <form action="/createpost" method="POST">
+                        <a class="btn btn-success" href="/createpostsubmit" role="button">New Post</a>
+                        <a class="btn btn-success" href="/createpostcourse" role="button">Go Back</a>
+                    </form>
                     <tbody>
                     {% for Post_No, Post_Info, Student_Email in course_posts %}
                         <b>Post {{ Post_No }}</b>
@@ -61,10 +65,18 @@
                                     <td>{{ Comment_Info }}</td>
                                     <td>{{ Student_Email }}</td>
                                 {% endif %}
-                        {% endfor %}
+                            {% endfor %}
                         </div>
                     {% endfor %}
                     </tbody>
+                    <form action="/createcommentsubmit" method="POST">
+                    <select name="tvalue">
+                        {% for tvalue in tvalues %}
+                            <option value = "{{ tvalue }}" selected='selected'>{{ tvalue }}</option>
+                        {% endfor %}
+                    </select>
+                    <input type="submit" value="Submit" />
+                    </form>
             </body>
     </div>
 </div>
