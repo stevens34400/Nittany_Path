@@ -536,7 +536,6 @@ def create_post():
     if (df_course1_posts.empty==False):
         df_course1_posts = df_course1_posts.drop(columns=0)
     df_course1_posts = df_course1_posts.values.tolist()
-    # print(df_course1_posts)
 
     #Posts and info from course 2
     cursor.execute('''SELECT *
@@ -547,28 +546,43 @@ def create_post():
     if (df_course2_posts.empty == False):
         df_course2_posts = df_course2_posts.drop(columns=0)
     df_course2_posts = df_course2_posts.values.tolist()
-    # print(df_course2_posts)
+    print(df_course2_posts)
 
-    #Obtain comments from all posts of course 2
-    df_course2_posts_comments = pd.DataFrame(course_2_posts)
-    df_course2_posts_comments = df_course2_posts_comments.values.tolist()
-    print(df_course2_posts_comments)
+    #All posts from course 2 including course attribute
+    df_course2_posts_course = pd.DataFrame(course_2_posts)
+    df_course2_posts_course = df_course2_posts_course.values.tolist()
+    print(df_course2_posts_course)
+
     index = 0
     comments_course2 = []
     # iteration through number of posts
-    for i in df_course2_posts_comments:
-        cursor.execute('''SELECT c1.Comment_No, c1.Comment_Info, c1.Student_Email
+    for i in df_course2_posts_course:
+        cursor.execute('''SELECT c1.Post_No, c1.Comment_No, c1.Comment_Info, c1.Student_Email
                             FROM Comments c1
-                            WHERE c1.Courses = ? AND Post_No = ?''',(df_course2_posts_comments[0][0],df_course2_posts_comments[index][1]))
+                            WHERE c1.Courses = ? AND Post_No = ?''',(df_course2_posts_course[0][0],df_course2_posts_course[index][1]))
         index=index+1
         comments_course2.append(cursor.fetchall())
-    print(comments_course2[1])
-    #comments_course2 [post_no]-[comment_no]-[element]
+    # comments_course2 [Post No]-[comment_no]-[element]
 
     index = 0
-    for i in comments_course2:
-        index = index+1
-    print(index)
+    #Iterate through post no
+    df_course2_comments = pd.DataFrame()
+    for posts in comments_course2:
+        print(posts)
+        index_comments = 0
+        # df_course2_comments = pd.DataFrame(index+1,columns="Post Number")
+        df_course2_comments= df_course2_comments.append(posts,ignore_index=True)
+        #iterate through comment no on specific post no
+        for comments in comments_course2[index]:
+            print('comment: ',comments)
+            print('test: ',comments_course2[0])
+            index_comments=index_comments+1
+            index = index+1
+            # df_course2_comments.append(comments)
+    print(df_course2_comments)
+    df_course2_comments = df_course2_comments.values.tolist()
+    print(df_course2_comments)
+
 
 
     #Posts from course 3
@@ -582,7 +596,7 @@ def create_post():
     df_course3_posts = df_course3_posts.values.tolist()
 
     return render_template('create_posts.html', course1=courses[0][0], course2=courses[1][0], course3=courses[2][0],
-                           course1_posts=df_course1_posts,course2_posts=df_course2_posts,course2_comments=comments_course2[0],course3_posts=df_course3_posts)
+                           course1_posts=df_course1_posts,course2_posts=df_course2_posts,course2_comments=df_course2_comments,course3_posts=df_course3_posts)
 
 #Link to show the assignments already in tables used
 @app.route('/createassignment',methods=['POST','GET'])
