@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <style>
+    .dropbtn {
+      background-color: #4CAF50;
+      color: white;
+      padding: 16px;
+        font-size: 16px;
+     border: none;
+    }
+
+    .dropdown {
+    position: relative;
+    display: inline-block;
+    }
+
+    .dropdown-content {
+    display: none;
+    position: absolute;
+    background-color: #f1f1f1;
+    min-width: 160px;
+    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+    z-index: 1;
+    }
+
+    .dropdown-content a {
+    color: black;
+    padding: 12px 16px;
+    text-decoration: none;
+    display: block;
+    }
+
+    .dropdown-content a:hover {background-color: #ddd;}
+
+    .dropdown:hover .dropdown-content {display: block;}
+
+    .dropdown:hover .dropbtn {background-color: #3e8e41;}
+    </style>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"
+          integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+    <title></title>
+</head>
+<body>
+<div class="container-sm">
+    <div class="card-body">
+        <h2 class="card-title">Create Posts</h2>
+            <body>
+                <h1>{{ course }}</h1>
+                    <form action="/createpostsprof" method="POST">
+                        <a class="btn btn-success" href="/createpostsubmit" role="button">New Post</a>
+                        <a class="btn btn-success" href="/login" role="button">Go Back</a>
+                    </form>
+                    <tbody>
+                    {% for Post_No, Post_Info, Student_Email in course_posts %}
+                        <b>Post {{ Post_No }}</b>
+                        <b>{{Post_Info}}</b>
+                        <b>{{ Student_Email }}</b>
+                        <div>
+                            {% for Post_No_comment, Comment_No, Comment_Info, Student_Email in course_comments %}
+                                {% if Post_No_comment == Post_No %}
+                                    <b><p>Comment {{ Comment_No }}</p></b>
+                                    <td>{{ Comment_Info }}</td>
+                                    <td>{{ Student_Email }}</td>
+                                {% endif %}
+                            {% endfor %}
+                        </div>
+                    {% endfor %}
+                    </tbody>
+                    <form action="/createcommentsubmit" method="POST">
+                    <select name="tvalue">
+                        {% for tvalue in tvalues %}
+                            <option value = "{{ tvalue }}" selected='selected'>{{ tvalue }}</option>
+                        {% endfor %}
+                    </select>
+                    <input type="submit" value="Submit" />
+                    </form>
+            </body>
+    </div>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.4.1.slim.min.js"
+        integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n"
+        crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"
+        integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo"
+        crossorigin="anonymous"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"
+        integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6"
+        crossorigin="anonymous"></script>
+</body>
+</html>

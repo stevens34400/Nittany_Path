@@ -19,6 +19,7 @@ users={}
 
 #Global variable for user input email
 user_input_email = "test"
+user_input_password = "test"
 
 selected_course=""
 tag = 0
@@ -351,6 +352,7 @@ def login():
     if request.method == 'POST' :
         #make sure to utilize gloabla user_input_email so that further functionalities can consider this
         global user_input_email
+        global user_input_password
         user_input_email = (request.form['Email'])
         user_input_password = request.form['Password']
 
@@ -522,8 +524,6 @@ def user_info():
 
 @app.route('/createpostcourse',methods=['POST','GET'])
 def create_post_course():
-    connection = sql.connect('database.db')
-    cursor = connection.cursor()
     courses = get_courses(user_input_email)
     df_courses = pd.DataFrame(courses)
     df_courses = df_courses[0].values.tolist()
@@ -533,8 +533,8 @@ def create_post_course():
     print(df_courses)
     return render_template('create_posts_course.html',courses=df_courses)
 
-@app.route('/createpost', methods=['POST','GET'])
-def create_post():
+@app.route('/createpoststudent', methods=['POST','GET'])
+def create_post_student():
     connection = sql.connect('database.db')
     cursor = connection.cursor()
     global selected_course
@@ -619,8 +619,14 @@ def create_post():
             df_course_comments = df_course_comments.append(posts, ignore_index=True)
         df_course_comments = df_course_comments.values.tolist()
 
+        df_post_no = pd.DataFrame(df_course_posts)
+        df_post_no = df_post_no.drop(columns=[1, 2]).drop_duplicates()
+        df_post_no = df_post_no.transpose()
+        df_post_no = df_post_no.values.tolist()
+        print(df_post_no)
+
         print('course1')
-        return render_template('create_posts.html', course=selected_course, course_posts=df_course_posts, course_comments=df_course_comments)
+        return render_template('create_posts.html', course=selected_course, course_posts=df_course_posts, course_comments=df_course_comments,tvalues=df_post_no[0])
 
     ##User selects course 2
     if (selected_course==courses[1][0]):
@@ -699,16 +705,111 @@ def create_post():
             df_course_comments = df_course_comments.append(posts, ignore_index=True)
         df_course_comments = df_course_comments.values.tolist()
 
+        df_post_no = pd.DataFrame(df_course_posts)
+        df_post_no = df_post_no.drop(columns=[1, 2]).drop_duplicates()
+        df_post_no = df_post_no.transpose()
+        df_post_no = df_post_no.values.tolist()
+        print(df_post_no)
+
         print('course3')
 
-        return render_template('create_posts.html', course=selected_course, course_posts=df_course_posts,course_comments=df_course_comments)
+        return render_template('create_posts.html', course=selected_course, course_posts=df_course_posts,course_comments=df_course_comments,tvalues=df_post_no[0])
 
+@app.route('/createpostprof',methods=['POST','GET'])
+def create_post_prof():
+    connection = sql.connect('database.db')
+    cursor = connection.cursor()
+    cursor.execute('''SELECT p1.Course
+                            FROM Professors p1
+                            WHERE p1.Professor_Email = ?''', (user_input_email,))
+    # Obtain course he's teaching
+    course_teaching = cursor.fetchall()
+    global tag
+    global post_no
+
+    if request.method == 'POST' :
+        if (tag==0):
+            print('test')
+            selected_course=request.form['Course']
+        #Create posts
+        elif (tag==1):
+            # post_content = post_info
+            post_content = request.form['Post']
+            # obtain max post no for the course
+            cursor.execute('''SELECT max(p1.Post_No)
+                                            FROM Posts p1
+                                            WHERE p1.Courses = ?''', course_teaching[0])
+            max_post_no = cursor.fetchall()
+            if (max_post_no[0][0]):
+                max_post_no = max_post_no[0][0] + 1
+            else:
+                max_post_no = 1
+            # enter new post
+            enter_post(course_teaching[0][0], max_post_no, user_input_email, post_content)
+        else:
+            comment_content = request.form['Comment']
+            cursor.execute('''SELECT max(c1.Comment_No)
+                                FROM Comments c1
+                                WHERE c1.Courses = ? AND c1.Post_No = ?''', (course_teaching[0][0],post_no))
+            max_comment_no = cursor.fetchall()
+            if (max_comment_no[0][0]):
+                max_comment_no = max_comment_no[0][0] + 1
+            else:
+                max_comment_no = 1
+            print(max_comment_no)
+            # enter new comment
+            enter_comment(course_teaching[0][0],post_no,max_comment_no,user_input_email,comment_content)
+
+    #Obtain posts from class teaching
+    cursor.execute('''SELECT *
+                                            FROM Posts p1
+                                            WHERE p1.Courses=?''', course_teaching[0])
+    course_posts = cursor.fetchall()
+    df_course_posts = pd.DataFrame(course_posts)
+    # If there are posts delete the course column
+    if (df_course_posts.empty == False):
+        df_course_posts = df_course_posts.drop(columns=0)
+    df_course_posts = df_course_posts.values.tolist()
+
+    # All posts from course 3 including course attribute
+    df_course_posts_course = pd.DataFrame(course_posts)
+    df_course_posts_course = df_course_posts_course.values.tolist()
+
+    index = 0
+    comments_course = []
+    # iteration through number of posts
+    for i in df_course_posts_course:
+        cursor.execute('''SELECT c1.Post_No, c1.Comment_No, c1.Comment_Info, c1.Student_Email
+                                                    FROM Comments c1
+                                                    WHERE c1.Courses = ? AND Post_No = ?''',
+                       (df_course_posts_course[0][0], df_course_posts_course[index][1]))
+        index = index + 1
+        comments_course.append(cursor.fetchall())
+    # comments_course2 [Post No]-[comment_no]-[element]
+
+    # Iterate through post no
+    df_course_comments = pd.DataFrame()
+    for posts in comments_course:
+        df_course_comments = df_course_comments.append(posts, ignore_index=True)
+    df_course_comments = df_course_comments.values.tolist()
+
+    df_post_no = pd.DataFrame(df_course_posts)
+    df_post_no = df_post_no.drop(columns=[1, 2]).drop_duplicates()
+    df_post_no = df_post_no.transpose()
+    df_post_no = df_post_no.values.tolist()
+    print(df_post_no)
+
+    return render_template('create_posts_prof.html',course=course_teaching[0][0],course_posts=df_course_posts,course_comments=df_course_comments,tvalues=df_post_no[0])
 
 @app.route('/createpostsubmit',methods=['POST','GET'])
 def create_post_submit():
     global tag
     tag = 1
-    return render_template('create_posts_submit.html')
+    print(user_input_email)
+    if(check_user_input_student(user_input_email,user_input_password)):
+        return render_template('create_posts_submit.html')
+    elif(check_user_input_prof(user_input_email,user_input_password)):
+        return render_template('create_posts_submit_prof.html')
 
 @app.route('/createcommentsubmit',methods=['POST','GET'])
 def create_comment_submit():
@@ -718,7 +819,10 @@ def create_comment_submit():
     if request.method == "POST":
         post_no = request.form['tvalue']
 
-    return render_template('create_comment_submit.html')
+    if (check_user_input_student(user_input_email, user_input_password)):
+        return render_template('create_comment_submit.html')
+    elif (check_user_input_prof(user_input_email, user_input_password)):
+        return render_template('create_comment_submit_prof.html')
 
 #Link to show the assignments already in tables used
 @app.route('/createassignment',methods=['POST','GET'])
