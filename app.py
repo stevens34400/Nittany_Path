@@ -32,6 +32,10 @@ assign =0
 hw_no=0
 exam_no=0
 
+#Global vairable used for specifying TA
+team_id = 0
+ta_course =""
+
 @app.route('/')
 def index():
     connection = sql.connect('database.db')
@@ -392,10 +396,12 @@ def index():
 @app.route('/login', methods=['POST','GET'])
 def login():
     error = None
+    global team_id
     if request.method == 'POST' :
         #make sure to utilize gloabla user_input_email so that further functionalities can consider this
         global user_input_email
         global user_input_password
+        global TA
         user_input_email = (request.form['Email'])
         user_input_password = request.form['Password']
 
@@ -403,7 +409,12 @@ def login():
         user_input_prof_checked = check_user_input_prof(user_input_email,user_input_password)
 
         if user_input_student_checked:
-            return (render_template('Home_Student.html'))
+            team_id = check_TA(user_input_email)
+            if(team_id):
+                print('TA')
+                return (render_template('Home_Student.html'))
+            else:
+                return (render_template('Home_Student.html'))
         elif (user_input_prof_checked):
             return (render_template('Home_Prof.html'))
         else:
@@ -434,19 +445,21 @@ def home():
 def user_info():
     connection = sql.connect('database.db')
     cursor = connection.cursor()
+    global user_input_password
+    global team_id
 
     if request.method == "POST":
         old_password = request.form['old_password']
         new_password = request.form['new_password']
         new_password2 = request.form['new_password2']
         valid = check_password(old_password)
-        print(new_password)
         if valid:
             if (new_password == new_password2):
                 cursor.execute('''UPDATE Students
                                     SET  Password = ?
                                     WHERE Student_Email = ? AND Password = ?''',
                                (new_password, user_input_email, old_password))
+                user_input_password=new_password
                 connection.commit()
             else:
                 return render_template('change_password_fail.html')
@@ -485,8 +498,22 @@ def user_info():
 
     test=df.values.tolist()
 
-    connection.commit()
-    return render_template('user_info.html', course_description=test, student_info=student_info)
+    #If student is a TA
+    if(team_id):
+        print(team_id[0])
+        #Obtain course student is TAing
+        cursor.execute('''SELECT Courses
+                            FROM Sections
+                            WHERE Teaching_Team_ID = ?
+                            GROUP BY Courses''',team_id[0])
+        course_ta = cursor.fetchall()
+        connection.commit()
+        return render_template('user_info_TA.html', course_description=test, student_info=student_info,courses=course_ta[0])
+
+    else:
+        print('not TA')
+        connection.commit()
+        return render_template('user_info.html', course_description=test, student_info=student_info)
 
 @app.route('/showgrades',methods=['POST','GET'])
 def show_grades():
@@ -520,11 +547,18 @@ def change_password():
 
 @app.route('/createpostcourse',methods=['POST','GET'])
 def create_post_course():
+    global tag
+    global team_id
+    global ta_course
     courses = get_courses(user_input_email)
     df_courses = pd.DataFrame(courses)
-    df_courses = df_courses[0].values.tolist()
-    global tag
+    print(df_courses)
 
+    if(team_id):
+        ta_course = TA_course(team_id)
+        df_courses = df_courses.append(ta_course,ignore_index=True)
+
+    df_courses = df_courses[0].values.tolist()
     tag = 0
     print(df_courses)
     return render_template('create_posts_course.html',courses=df_courses)
@@ -1298,6 +1332,28 @@ def check_password(password):
         return True
     else:
         return False
+
+def check_TA(user_input_email):
+    connection = sql.connect('database.db')
+    cursor = connection.cursor()
+
+    #Obtain Teaching team id if TA
+    cursor.execute('''SELECT Teaching_Team_ID
+                        FROM TA_teaching_teams
+                        WHERE Student_Email = ?''',(user_input_email,))
+    team_id = cursor.fetchall()
+    return team_id
+
+def TA_course(team_id):
+    connection=sql.connect('database.db')
+    cursor = connection.cursor()
+
+    # Obtain course student is TAing
+    cursor.execute('''SELECT Courses
+                                FROM Sections
+                                WHERE Teaching_Team_ID = ?
+                                GROUP BY Courses''', team_id[0])
+    return cursor.fetchall()
 
 if __name__ == '__main__':
     app.run()
