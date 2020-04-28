@@ -46,6 +46,9 @@
 <body>
 <div class="container-sm">
     <div class="card-body">
+        <form action="/createpostsprof" method="POST">
+            <a class="btn btn-success" href="/home" role="button">Go Back</a>
+        </form>
         <form action="/createpoststudent" method="POST">
             <select name="Course">
                 {% for course in courses %}

@@ -404,7 +404,7 @@ def login():
 
         if user_input_student_checked:
             return (render_template('Home_Student.html'))
-        if (user_input_prof_checked):
+        elif (user_input_prof_checked):
             return (render_template('Home_Prof.html'))
         else:
             return(render_template('login_page_fail.html'))
@@ -419,6 +419,15 @@ def login():
         print(new_key)
         """
     return render_template('login_page.html')
+
+@app.route('/home',methods=['POST','GET'])
+def home():
+    global user_input_email
+    global user_input_password
+    if (check_user_input_prof(user_input_email,user_input_password)):
+        return render_template('Home_Prof.html')
+    elif (check_user_input_student(user_input_email,user_input_password)):
+        return render_template('Home_Student.html')
 
 ###USER INFO FUNCTIONALITY
 @app.route('/userinfo', methods=['POST','GET'])
