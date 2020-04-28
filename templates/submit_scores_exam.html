@@ -65,6 +65,15 @@
             <input type="submit" value="Submit" />
         </form>
         <h5>For Exam: {{ exam_no }}</h5>
+        <h5>Change Score for Student:</h5>
+        <form action="/assigngradeno" method="POST">
+            <select name="email">
+                {% for email in emails %}
+                    <option value = "{{ email }}" selected='selected'>{{ email }}</option>
+                {% endfor %}
+            </select>
+            <input type="submit" value="Submit" />
+        </form>
         <div>
             <table class="table table-dark">
             <tr>

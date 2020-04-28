@@ -21,9 +21,16 @@ users={}
 user_input_email = "test"
 user_input_password = "test"
 
+#Global variables used for creating posts functionality
 selected_course=""
 tag = 0
 post_no = -1
+
+#Global variable used for submitting scores
+student_email="test"
+assign =0
+hw_no=0
+exam_no=0
 
 @app.route('/')
 def index():
@@ -249,20 +256,38 @@ def index():
 
     # Fill in grade for hw course 1
     cursor.execute('''UPDATE OR IGNORE Homework_Grades
-                        SET Course_HW_Grade=(SELECT Course_1_HW_Grade FROM students_ta_csv
-                                                WHERE students_ta_csv.Courses_1 = Homework_Grades.Courses AND students_ta_csv.Course_1_Section=Homework_Grades.Course_Section AND students_ta_csv.Student_Email = Homework_Grades.Student_Email)                   
+                        SET Course_HW_Grade= case when coalesce(Course_HW_Grade,'')='' then
+                                            (SELECT Course_1_HW_Grade FROM students_ta_csv
+                                                WHERE students_ta_csv.Courses_1 = Homework_Grades.Courses AND 
+                                                students_ta_csv.Course_1_Section=Homework_Grades.Course_Section AND 
+                                                students_ta_csv.Student_Email = Homework_Grades.Student_Email)
+                                            else
+                                                Course_HW_Grade
+                                            end                   
     ''')
 
     # Fill in grade for hw course_2
     cursor.execute('''UPDATE OR IGNORE Homework_Grades
-                        SET Course_HW_Grade=coalesce(Course_HW_Grade,(SELECT Course_2_HW_Grade FROM students_ta_csv
-                                                WHERE students_ta_csv.Courses_2 = Homework_Grades.Courses AND students_ta_csv.Course_2_Section=Homework_Grades.Course_Section AND students_ta_csv.Student_Email = Homework_Grades.Student_Email) )                  
+                        SET Course_HW_Grade=case when coalesce (Course_HW_Grade,'')='' then
+                                            coalesce(Course_HW_Grade,(SELECT Course_2_HW_Grade FROM students_ta_csv
+                                                WHERE students_ta_csv.Courses_2 = Homework_Grades.Courses AND 
+                                                students_ta_csv.Course_2_Section=Homework_Grades.Course_Section AND 
+                                                students_ta_csv.Student_Email = Homework_Grades.Student_Email) )
+                                            else
+                                                Course_HW_Grade
+                                            end                  
     ''')
 
     # Fill in grade for hw course_3
     cursor.execute('''UPDATE OR IGNORE Homework_Grades
-                        SET Course_HW_Grade=coalesce(Course_HW_Grade,(SELECT Course_3_HW_Grade FROM students_ta_csv
-                                                WHERE students_ta_csv.Courses_3 = Homework_Grades.Courses AND students_ta_csv.Course_3_Section=Homework_Grades.Course_Section AND students_ta_csv.Student_Email = Homework_Grades.Student_Email))                   
+                        SET Course_HW_Grade=case when coalesce (Course_HW_Grade,'')='' then
+                                            coalesce(Course_HW_Grade,(SELECT Course_3_HW_Grade FROM students_ta_csv
+                                                WHERE students_ta_csv.Courses_3 = Homework_Grades.Courses AND 
+                                                students_ta_csv.Course_3_Section=Homework_Grades.Course_Section AND 
+                                                students_ta_csv.Student_Email = Homework_Grades.Student_Email))
+                                            else
+                                                Course_HW_Grade
+                                            end                   
     ''')
 
     ###CREATE AND FILL IN EXAMS
@@ -302,21 +327,39 @@ def index():
     ''')
 
     # Fill in grade for exam course 1
-    cursor.execute('''UPDATE Exam_Grades
-                        SET Course_Exam_Grade=(SELECT Course_1_Exam_Grade FROM students_ta_csv
-                                                WHERE students_ta_csv.Courses_1 = Exam_Grades.Courses AND students_ta_csv.Course_1_Section=Exam_Grades.Course_Section AND students_ta_csv.Student_Email = Exam_Grades.Student_Email)                   
+    cursor.execute('''UPDATE OR IGNORE  Exam_Grades
+                        SET Course_Exam_Grade=case when coalesce (Course_Exam_Grade,'')=''then
+                                                (SELECT Course_1_Exam_Grade FROM students_ta_csv
+                                                WHERE students_ta_csv.Courses_1 = Exam_Grades.Courses AND 
+                                                students_ta_csv.Course_1_Section=Exam_Grades.Course_Section AND 
+                                                students_ta_csv.Student_Email = Exam_Grades.Student_Email)
+                                                else
+                                                    Course_Exam_Grade
+                                                end 
     ''')
 
     # Fill in grade for exam course_2
-    cursor.execute('''UPDATE Exam_Grades
-                        SET Course_Exam_Grade=coalesce(Course_Exam_Grade,(SELECT Course_2_Exam_Grade FROM students_ta_csv
-                                                WHERE students_ta_csv.Courses_2 = Exam_Grades.Courses AND students_ta_csv.Course_2_Section=Exam_Grades.Course_Section AND students_ta_csv.Student_Email = Exam_Grades.Student_Email) )                  
+    cursor.execute('''UPDATE OR IGNORE Exam_Grades
+                        SET Course_Exam_Grade=case when coalesce(Course_Exam_Grade,'')=''then
+                                                coalesce(Course_Exam_Grade,(SELECT Course_2_Exam_Grade FROM students_ta_csv
+                                                WHERE students_ta_csv.Courses_2 = Exam_Grades.Courses AND 
+                                                students_ta_csv.Course_2_Section=Exam_Grades.Course_Section AND 
+                                                students_ta_csv.Student_Email = Exam_Grades.Student_Email) )
+                                                else
+                                                    Course_Exam_Grade
+                                                end                  
     ''')
 
     # Fill in grade for exam course_3
-    cursor.execute('''UPDATE Exam_Grades
-                        SET Course_Exam_Grade=coalesce(Course_Exam_Grade,(SELECT Course_3_Exam_Grade FROM students_ta_csv
-                                                WHERE students_ta_csv.Courses_3 = Exam_Grades.Courses AND students_ta_csv.Course_3_Section=Exam_Grades.Course_Section AND students_ta_csv.Student_Email = Exam_Grades.Student_Email))                   
+    cursor.execute('''UPDATE OR IGNORE Exam_Grades
+                        SET Course_Exam_Grade=case when coalesce (Course_Exam_Grade,'')=''then
+                                                coalesce(Course_Exam_Grade,(SELECT Course_3_Exam_Grade FROM students_ta_csv
+                                                WHERE students_ta_csv.Courses_3 = Exam_Grades.Courses AND 
+                                                students_ta_csv.Course_3_Section=Exam_Grades.Course_Section AND 
+                                                students_ta_csv.Student_Email = Exam_Grades.Student_Email))        
+                                                else
+                                                    Course_Exam_Grade
+                                                end           
     ''')
 
     ###CREATE AND FILL IN POSTS
@@ -988,18 +1031,25 @@ def createexam():
 def submitscores():
     connection = sql.connect('database.db')
     cursor = connection.cursor()
+    global tag
     # Obtain class prof is teaching
     cursor.execute('''SELECT p1.Course
                                 FROM Professors p1
                                 WHERE p1.Professor_Email = ?''', (user_input_email,))
     # Obtain course he's teaching
     course_teaching = cursor.fetchall()
+    tag=0
     return render_template('submit_scores.html',course=course_teaching[0][0])
 
 @app.route('/submitscorehw',methods=['POST','GET'])
 def submitscoreshw():
     connection = sql.connect('database.db')
     cursor = connection.cursor()
+    global tag
+    global student_email
+    global hw_no
+    global assign
+    assign = 1 #1-Homework
 
     #Obtain class prof is teaching
     cursor.execute('''SELECT p1.Course
@@ -1019,32 +1069,69 @@ def submitscoreshw():
 
     #Obtain user selection for which hw to show
     if request.method == 'POST':
-        hw_no = request.form['tvalue']
-        cursor.execute('''SELECT hg1.Student_Email, hg1.Course_HW_Grade
-                            FROM Homework_Grades hg1
-                            WHERE hg1.Courses = ? AND hg1.Course_HW_No = ?''',(course_teaching[0][0],hw_no))
-        student_hw_grade = cursor.fetchall()
-        df_student_email = pd.DataFrame(student_hw_grade)
-        df_student_email = df_student_email.drop(columns=1)
-        df_student_email = df_student_email[0].values.tolist()
-        print(df_student_email)
-        return render_template('submit_scores_hw.html',emails=df_student_email,tvalues=df_course_hw_no,student_hw_grade=student_hw_grade,hw_no=hw_no,course=course_teaching[0][0])
+        print('tag: ',tag)
+        #Tag=0, will obtain which assignment number to grade
+        if (tag==0):
+            print('test')
+            hw_no = request.form['tvalue']
+            cursor.execute('''SELECT hg1.Student_Email, hg1.Course_HW_Grade
+                                FROM Homework_Grades hg1
+                                WHERE hg1.Courses = ? AND hg1.Course_HW_No = ?''',(course_teaching[0][0],hw_no))
+            student_hw_grade = cursor.fetchall()
+            df_student_email = pd.DataFrame(student_hw_grade)
+            df_student_email = df_student_email.drop(columns=1)
+            df_student_email = df_student_email[0].values.tolist()
+
+            return render_template('submit_scores_hw.html',emails=df_student_email,tvalues=df_course_hw_no,
+                                   student_hw_grade=student_hw_grade,hw_no=hw_no,course=course_teaching[0][0])
+        #Tag=1, will change the score for that student after going through assigngradeno
+        else:
+            grade = request.form['Grade']
+            cursor.execute('''UPDATE Homework_Grades
+                                SET Course_HW_Grade = ?
+                                WHERE Student_Email = ? AND Courses=? AND Course_HW_No=?''',(grade,student_email,course_teaching[0][0],hw_no))
+
+            cursor.execute('''SELECT hg1.Student_Email, hg1.Course_HW_Grade
+                                           FROM Homework_Grades hg1
+                                           WHERE hg1.Courses = ? AND hg1.Course_HW_No = ?''',
+                           (course_teaching[0][0], hw_no))
+            student_hw_grade = cursor.fetchall()
+            df_student_email = pd.DataFrame(student_hw_grade)
+            df_student_email = df_student_email.drop(columns=1)
+            df_student_email = df_student_email[0].values.tolist()
+
+            connection.commit()
+            tag=0
+            return render_template('submit_scores_hw.html', emails=df_student_email, tvalues=df_course_hw_no,
+                                   student_hw_grade=student_hw_grade, hw_no=hw_no, course=course_teaching[0][0])
 
     connection.commit()
     return render_template('submit_scores_hw.html',tvalues=df_course_hw_no,course=course_teaching[0][0])
 
 #Allow to change grade of specific student email
-@app.route('/changegrade',methods=['POST','GET'])
-def test():
-    connection = sql.connect('database.db')
-    cursor=connection.cursor()
-    print(request.form['email'])
-    return render_template('submit_scores_hw.html')
+@app.route('/assigngradeno',methods=['POST','GET'])
+def assign_grade_no():
+    global tag
+    global student_email
+    global assign
+    tag=1
+    if request.method == "POST":
+        student_email=request.form['email']
+
+    if assign ==1:
+        return render_template('submit_scores_hw_change.html')
+    elif assign == 2:
+        return render_template('submit_scores_exam_change.html')
 
 @app.route('/submitscoreexam',methods=['POST','GET'])
 def submitscoreexam():
     connection = sql.connect('database.db')
     cursor = connection.cursor()
+    global tag
+    global student_email
+    global assign
+    global exam_no
+    assign = 2 #2-exams
 
     # Obtain class prof is teaching
     cursor.execute('''SELECT p1.Course
@@ -1062,15 +1149,41 @@ def submitscoreexam():
     df_course_exam_no = pd.DataFrame(course_exam_no)
     df_course_exam_no = df_course_exam_no[0].values.tolist()
 
-    # Obtain user selection for which hw to show
+    # Obtain user selection for which exam to show
     if request.method == 'POST':
-        exam_no = request.form['tvalue']
-        cursor.execute('''SELECT eg1.Student_Email, eg1.Course_Exam_Grade
-                                FROM Exam_Grades eg1
-                                WHERE eg1.Courses = ? AND eg1.Course_Exam_No = ?''', (course_teaching[0][0], exam_no))
-        student_exam_grade = cursor.fetchall()
-        return render_template('submit_scores_exam.html', tvalues=df_course_exam_no, student_exam_grade=student_exam_grade,
-                               exam_no=exam_no,course=course_teaching[0][0])
+        if (tag==0):
+            exam_no = request.form['tvalue']
+            cursor.execute('''SELECT eg1.Student_Email, eg1.Course_Exam_Grade
+                                    FROM Exam_Grades eg1
+                                    WHERE eg1.Courses = ? AND eg1.Course_Exam_No = ?''', (course_teaching[0][0], exam_no))
+            student_exam_grade = cursor.fetchall()
+            df_student_email = pd.DataFrame(student_exam_grade)
+            df_student_email = df_student_email.drop(columns=1)
+            df_student_email = df_student_email[0].values.tolist()
+
+            return render_template('submit_scores_exam.html', tvalues=df_course_exam_no, student_exam_grade=student_exam_grade,
+                                   exam_no=exam_no,course=course_teaching[0][0],emails=df_student_email)
+        else:
+            grade = request.form['Grade']
+            cursor.execute('''UPDATE Exam_Grades
+                                            SET Course_Exam_Grade = ?
+                                            WHERE Student_Email = ? AND Courses=? AND Course_Exam_No=?''',
+                           (grade, student_email, course_teaching[0][0], exam_no))
+
+            cursor.execute('''SELECT eg1.Student_Email, eg1.Course_Exam_Grade
+                                                FROM Exam_Grades eg1
+                                                WHERE eg1.Courses = ? AND eg1.Course_Exam_No = ?''',
+                           (course_teaching[0][0], exam_no))
+            student_exam_grade = cursor.fetchall()
+            df_student_email = pd.DataFrame(student_exam_grade)
+            df_student_email = df_student_email.drop(columns=1)
+            df_student_email = df_student_email[0].values.tolist()
+            tag = 0
+            connection.commit()
+
+            return render_template('submit_scores_exam.html', tvalues=df_course_exam_no,
+                                   student_exam_grade=student_exam_grade,
+                                   exam_no=exam_no, course=course_teaching[0][0], emails=df_student_email)
 
     connection.commit()
     return render_template('submit_scores_exam.html', tvalues=df_course_exam_no,course=course_teaching[0][0])
