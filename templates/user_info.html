@@ -18,7 +18,6 @@
         <table class="table table-dark">
             <tr>
                 <th scope="col">Email</th>
-                <th scope="col">Password</th>
                 <th scope="col">Full Name</th>
                 <th scope="col">Age</th>
                 <th scope="col">Gender</th>
@@ -27,10 +26,9 @@
                 <th scope="col">Zipcode</th>
             </tr>
             <tbody>
-            {% for Student_Email, Password, Full_Name, Age, Gender, Major, Street, Zip in student_info %}
+            {% for Student_Email, Full_Name, Age, Gender, Major, Street, Zip in student_info %}
                 <tr>
                     <td> {{ Student_Email }} </td>
-                    <td> {{ Password }} </td>
                     <td>{{ Full_Name }}</td>
                     <td>{{ Age }}</td>
                     <td> {{ Gender }} </td>
@@ -44,31 +42,35 @@
     </div>
     <div class="card-body">
         <h2 class="card-title">Classes</h2>
+        <h5>Click on courses to get assignment grades</h5>
         <table class="table table-dark">
             <tr>
                 <th scope="col">Courses</th>
                 <th scope="col">Course Name</th>
                 <th scope="col">Course Section</th>
-                <th scope="col">HW Grade</th>
-                <th scope="col">Exam Grade</th>
                 <th scope="col">Professor Email</th>
                 <th scope="col">Office Address</th>
 
             </tr>
             <tbody>
-            {% for Courses, Course_Name, Course_Section,HW_Grade, Exam_Grade, Professor_Email, Office_Address in course_description %}
+            {% for Courses, Course_Name, Course_Section, Professor_Email, Office_Address in course_description %}
                 <tr>
-                    <td> {{ Courses }} </td>
+                    <td>
+                        <form action="/showgrades" method ="POST">
+                        <button name ="course" type="submit" value="{{ Courses }}">{{ Courses }}</button>
+                        </form>
+                    </td>
                     <td>{{ Course_Name }}</td>
                     <td>{{ Course_Section }}</td>
-                    <td>{{ HW_Grade }}</td>
-                    <td>{{ Exam_Grade }}</td>
                     <td>{{ Professor_Email }}</td>
                     <td>{{ Office_Address }}</td>
                 </tr>
             {% endfor %}
             </tbody>
         </table>
+        <form action="/userinfo" method="POST">
+            <a class="btn btn-success" href="/changepassword" role="button">Change Password</a>
+        </form>
     </div>
 </div>
 

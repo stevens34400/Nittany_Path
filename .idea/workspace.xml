@@ -2,17 +2,14 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="a053f2ce-0c4c-46be-b26a-3a5f2be688e9" name="Default Changelist" comment="">
+      <change afterPath="$PROJECT_DIR$/templates/change_password.html" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/templates/change_password_fail.html" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/templates/show_grades.html" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/dataSources/933148b6-de9b-4d83-99dd-3ac65e96c84e.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/dataSources/933148b6-de9b-4d83-99dd-3ac65e96c84e.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app.py" beforeDir="false" afterPath="$PROJECT_DIR$/app.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/database.db" beforeDir="false" afterPath="$PROJECT_DIR$/database.db" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/templates/Home_Prof.html" beforeDir="false" afterPath="$PROJECT_DIR$/templates/Home_Prof.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/templates/Home_Student.html" beforeDir="false" afterPath="$PROJECT_DIR$/templates/Home_Student.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/templates/create_assignment.html" beforeDir="false" afterPath="$PROJECT_DIR$/templates/create_assignment.html" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/templates/create_posts_course.html" beforeDir="false" afterPath="$PROJECT_DIR$/templates/create_posts_course.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/templates/create_posts_prof.html" beforeDir="false" afterPath="$PROJECT_DIR$/templates/create_posts_prof.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/templates/submit_scores.html" beforeDir="false" afterPath="$PROJECT_DIR$/templates/submit_scores.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/templates/submit_scores_hw.html" beforeDir="false" afterPath="$PROJECT_DIR$/templates/submit_scores_hw.html" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/templates/user_info.html" beforeDir="false" afterPath="$PROJECT_DIR$/templates/user_info.html" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -135,7 +132,8 @@
       <workItem from="1587519921799" duration="10886000" />
       <workItem from="1587580485409" duration="14151000" />
       <workItem from="1587634905055" duration="20575000" />
-      <workItem from="1587991115170" duration="38011000" />
+      <workItem from="1587991115170" duration="38373000" />
+      <workItem from="1588086888793" duration="5787000" />
     </task>
     <servers />
   </component>
@@ -162,22 +160,22 @@
       <screen x="0" y="0" width="1504" height="963" />
     </state>
     <state x="533" y="237" key="FileChooserDialogImpl/0.0.1504.963@0.0.1504.963" timestamp="1587662597087" />
-    <state width="1461" height="106" key="GridCell.Tab.0.bottom" timestamp="1588044774634">
+    <state width="1461" height="106" key="GridCell.Tab.0.bottom" timestamp="1588092952872">
       <screen x="0" y="0" width="1504" height="963" />
     </state>
-    <state width="1461" height="106" key="GridCell.Tab.0.bottom/0.0.1504.963@0.0.1504.963" timestamp="1588044774634" />
-    <state width="1461" height="106" key="GridCell.Tab.0.center" timestamp="1588044774634">
+    <state width="1461" height="106" key="GridCell.Tab.0.bottom/0.0.1504.963@0.0.1504.963" timestamp="1588092952872" />
+    <state width="1461" height="106" key="GridCell.Tab.0.center" timestamp="1588092952872">
       <screen x="0" y="0" width="1504" height="963" />
     </state>
-    <state width="1461" height="106" key="GridCell.Tab.0.center/0.0.1504.963@0.0.1504.963" timestamp="1588044774634" />
-    <state width="1461" height="106" key="GridCell.Tab.0.left" timestamp="1588044774634">
+    <state width="1461" height="106" key="GridCell.Tab.0.center/0.0.1504.963@0.0.1504.963" timestamp="1588092952872" />
+    <state width="1461" height="106" key="GridCell.Tab.0.left" timestamp="1588092952872">
       <screen x="0" y="0" width="1504" height="963" />
     </state>
-    <state width="1461" height="106" key="GridCell.Tab.0.left/0.0.1504.963@0.0.1504.963" timestamp="1588044774634" />
-    <state width="1461" height="106" key="GridCell.Tab.0.right" timestamp="1588044774634">
+    <state width="1461" height="106" key="GridCell.Tab.0.left/0.0.1504.963@0.0.1504.963" timestamp="1588092952872" />
+    <state width="1461" height="106" key="GridCell.Tab.0.right" timestamp="1588092952872">
       <screen x="0" y="0" width="1504" height="963" />
     </state>
-    <state width="1461" height="106" key="GridCell.Tab.0.right/0.0.1504.963@0.0.1504.963" timestamp="1588044774634" />
+    <state width="1461" height="106" key="GridCell.Tab.0.right/0.0.1504.963@0.0.1504.963" timestamp="1588092952872" />
     <state width="1461" height="317" key="GridCell.Tab.1.bottom" timestamp="1586624532638">
       <screen x="0" y="0" width="1504" height="963" />
     </state>
@@ -198,10 +196,10 @@
       <screen x="0" y="0" width="1504" height="963" />
     </state>
     <state x="254" y="124" key="SettingsEditor/0.0.1504.963@0.0.1504.963" timestamp="1585939332468" />
-    <state x="650" y="372" width="322" height="233" key="com.intellij.database.actions.DdlActions$DeleteProvider2$1" timestamp="1588044459435">
+    <state x="650" y="372" width="322" height="233" key="com.intellij.database.actions.DdlActions$DeleteProvider2$1" timestamp="1588092254410">
       <screen x="0" y="0" width="1504" height="963" />
     </state>
-    <state x="650" y="372" width="322" height="233" key="com.intellij.database.actions.DdlActions$DeleteProvider2$1/0.0.1504.963@0.0.1504.963" timestamp="1588044459435" />
+    <state x="650" y="372" width="322" height="233" key="com.intellij.database.actions.DdlActions$DeleteProvider2$1/0.0.1504.963@0.0.1504.963" timestamp="1588092254410" />
     <state x="462" y="123" key="com.intellij.database.view.ui.AbstractDbRefactoringDialog" timestamp="1587510221235">
       <screen x="0" y="0" width="1504" height="963" />
     </state>
@@ -216,6 +214,6 @@
     <state x="415" y="206" width="672" height="678" key="search.everywhere.popup/0.0.1504.963@0.0.1504.963" timestamp="1586153905571" />
   </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
-    <SUITE FILE_PATH="coverage/nittanypath$nittanypath.coverage" NAME="nittanypath Coverage Results" MODIFIED="1588044774624" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="" />
+    <SUITE FILE_PATH="coverage/nittanypath$nittanypath.coverage" NAME="nittanypath Coverage Results" MODIFIED="1588092952852" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="" />
   </component>
 </project>

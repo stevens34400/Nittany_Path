@@ -435,10 +435,23 @@ def user_info():
     connection = sql.connect('database.db')
     cursor = connection.cursor()
 
-    #Get rid of unwanted characters after obtaining string from fetchall()
-    remove_chars = ['(', ')', ',']
-
-    print("Global variable email input:", user_input_email)
+    if request.method == "POST":
+        old_password = request.form['old_password']
+        new_password = request.form['new_password']
+        new_password2 = request.form['new_password2']
+        valid = check_password(old_password)
+        print(new_password)
+        if valid:
+            if (new_password == new_password2):
+                cursor.execute('''UPDATE Students
+                                    SET  Password = ?
+                                    WHERE Student_Email = ? AND Password = ?''',
+                               (new_password, user_input_email, old_password))
+                connection.commit()
+            else:
+                return render_template('change_password_fail.html')
+        else:
+            return render_template('change_password_fail.html')
 
     ## Course description
     cursor.execute('''SELECT c1.Courses, c1.Course_Name, e1.Course_Section
@@ -459,120 +472,51 @@ def user_info():
 
 
     ## Student info (everything from Students table)
-    cursor.execute('''SELECT *
+    cursor.execute('''SELECT Student_Email, Full_Name, Age, Gender, Major, Street, Zip
                         FROM Students
                         WHERE Students.Student_Email = ?''',(user_input_email,))
     student_info = cursor.fetchall()
 
-    ## Hw grade
-    cursor.execute('''SELECT e1.Courses, hw1.Course_HW_Grade
-                        FROM Enrolls e1, Homework_Grades hw1
-                        WHERE (e1.Student_Email = ? AND e1.Student_Email = hw1.Student_Email AND e1.Courses = hw1.Courses AND e1.Course_Section = hw1.Course_Section)
-                        ''',(user_input_email,))
-    hw_grades = cursor.fetchall()
-
-    ## Exam grade
-    cursor.execute('''SELECT e1.Courses, ex1.Course_Exam_Grade
-                            FROM Enrolls e1, Exam_Grades ex1
-                            WHERE (e1.Student_Email = ? AND e1.Student_Email = ex1.Student_Email AND e1.Courses = ex1.Courses AND e1.Course_Section = ex1.Course_Section)
-                            ''', (user_input_email,))
-    exam_grades = cursor.fetchall()
-
-    #print("course description: ",course_description)
-    #print("prof contact: ",prof_contact)
-    #print("student info: ",student_info)
-    #print("hw grade: ",hw_grades)
-    #print("exam grade: ", exam_grades)
-    df_exam_grades = pd.DataFrame(exam_grades)
-    df_hw_grades = pd.DataFrame(hw_grades)
     df=pd.DataFrame(course_description)
-
-    print(df)
-
-    #only courses column from course_description
-    #Note: all courses a student is taking
-    df_description_course = df[0]
-
-    #print("hw_grades")
-    #print(df_hw_grades)
-    #print("exam_grades")
-    #print(df_exam_grades)
-    #Split hw_grades into two lists
-    df_hw_grades_course = df_hw_grades[0]
-    df_hw_grades_score = df_hw_grades [1]
-    #Split exam_grades into two lists
-    df_exam_grades_course = df_exam_grades[0]
-    df_exam_grades_score = df_exam_grades[1]
-
-    ###Algorithm to make sure that specified course has a HW grade
-    #List to append to final dataframe pushed to page
-    hw_scores = []
-
-    # indexes for iteration
-    index1 = 0;  # exam
-    index2 = 0;  # description
-    match = 0
-    #Compare every course taken by student to the courses that have homework (courses->hw_courses)
-    for i in df_description_course:
-        for x in df_hw_grades_course:
-            if (df_hw_grades_course[index1] == df_description_course[index2]):
-                match = index1+1
-                break;
-            #increment for description
-            index1 = index1 + 1
-
-        if match:
-            match = match-1
-            hw_scores.append(df_hw_grades_score[match])
-        else:
-            hw_scores.append('NULL')
-        index1 = 0
-        index2 = index2 + 1
-
-    print(hw_scores)
-
-
-    #Add in HW grade column into dataframe
-    df['HW_Grade']=hw_scores
-
-    ###Algorithm to make sure that specified course has a Exam grade
-    #exam score list to attach on final dataframe
-    exam_scores=[]
-
-    # indexes for iteration
-    index1 = 0;  # exam
-    index2 = 0;  # description
-    match = 0
-    for i in df_description_course:
-        for x in df_exam_grades_course:
-            if (df_exam_grades_course[index1] == df_description_course[index2]):
-                match = index1+1
-                break;
-            #increment for description
-            index1 = index1 + 1
-
-        if match:
-            match = match-1
-            exam_scores.append(df_exam_grades_score[match])
-        else:
-            exam_scores.append('N/A')
-        index1 = 0
-        match = 0
-        index2 = index2 + 1
-
-    df['Exam_Grade']=exam_scores
 
     df_prof_contact = pd.DataFrame(prof_contact)
     df['Professor_Email']=df_prof_contact[0]
     df['Office_Address']=df_prof_contact[1]
-    #print(df)
 
     test=df.values.tolist()
-    print(test)
-    print(student_info)
 
     connection.commit()
     return render_template('user_info.html', course_description=test, student_info=student_info)
+
+@app.route('/showgrades',methods=['POST','GET'])
+def show_grades():
+    connection = sql.connect('database.db')
+    cursor = connection.cursor()
+
+    if request.method == "POST":
+        course = request.form['course']
+        #Obtain Homework Number and Homework Grades
+        cursor.execute('''SELECT Course_HW_No, Course_HW_Grade
+                            FROM Homework_Grades
+                            WHERE Student_Email = ? AND Courses = ?''',(user_input_email,course))
+        homework = cursor.fetchall()
+        df_homework = pd.DataFrame(homework)
+        df_homework = df_homework.values.tolist()
+
+        #Obtain Exam Number and Exam Grades
+        cursor.execute('''SELECT Course_Exam_No, Course_Exam_Grade
+                                    FROM Exam_Grades
+                                    WHERE Student_Email = ? AND Courses = ?''', (user_input_email, course))
+        exam = cursor.fetchall()
+        df_exam = pd.DataFrame(exam)
+        df_exam = df_exam.values.tolist()
+
+
+    return render_template('show_grades.html',homework=df_homework,exam=df_exam)
+
+@app.route('/changepassword',methods=['POST','GET'])
+def change_password():
+    return render_template('change_password.html')
 
 @app.route('/createpostcourse',methods=['POST','GET'])
 def create_post_course():
@@ -1248,6 +1192,19 @@ def enter_homework(course_teaching, assign_no, assign_detail):
     cursor = connection.cursor()
     cursor.execute('''INSERT INTO Homework(Courses,Course_HW_No,Course_HW_Details) VALUES (?,?,?);'''
                    , (course_teaching[0][0], assign_no, assign_detail))
+    cursor.execute('''SELECT Count(Student_Email)
+                        FROM Homework_Grades
+                        WHERE Courses = ?''',(course_teaching[0][0],))
+    number_students = cursor.fetchall()
+
+    cursor.execute('''SELECT Student_Email
+                        FROM Homework_Grades
+                        WHERE Courses = ?''',(course_teaching[0][0],))
+    students = cursor.fetchall()
+
+    for i in range(0,number_students[0][0]):
+        cursor.execute('''INSERT INTO Homework_Grades(Courses,Student_Email,Course_HW_No,Course_HW_Grade) 
+                            VALUES (?,?,?,?);''',(course_teaching[0][0],students[i][0],assign_no,"N/A"))
     connection.commit()
 
 def enter_exam(course_teaching, assign_no, assign_detail):
@@ -1255,6 +1212,20 @@ def enter_exam(course_teaching, assign_no, assign_detail):
     cursor = connection.cursor()
     cursor.execute('''INSERT INTO Exams(Courses,Course_Exam_No,Course_Exam_Details) VALUES (?,?,?);'''
                    , (course_teaching[0][0], assign_no, assign_detail))
+    cursor.execute('''SELECT Count(Student_Email)
+                        FROM Exam_Grades
+                        WHERE Courses = ?''', (course_teaching[0][0],))
+    number_students = cursor.fetchall()
+
+    cursor.execute('''SELECT Student_Email
+                        FROM Exam_Grades
+                        WHERE Courses = ?''', (course_teaching[0][0],))
+    students = cursor.fetchall()
+
+    for i in range(0, number_students[0][0]):
+        cursor.execute('''INSERT INTO Exam_Grades(Courses,Student_Email,Course_Exam_No,Course_Exam_Grade) 
+                            VALUES (?,?,?,?);''', (course_teaching[0][0], students[i][0], assign_no, "N/A"))
+
     connection.commit()
 
 def enter_post(Courses, Post_No,Student_Email,Post_Info):
@@ -1270,6 +1241,18 @@ def enter_comment(Courses, Post_No,Comment_No,Student_Email,Comment_Info):
     cursor.execute('''INSERT INTO Comments(Courses,Post_No,Comment_No,Student_Email,Comment_Info) VALUES (?,?,?,?,?);
     ''',(Courses,Post_No,Comment_No,Student_Email,Comment_Info))
     connection.commit()
+
+def check_password(password):
+    connection = sql.connect('database.db')
+    cursor = connection.cursor()
+    cursor.execute('''SELECT s1.Student_Email
+                        FROM Students s1
+                        WHERE s1.Password = ? AND s1.Student_Email=?''',(password,user_input_email))
+    result = cursor.fetchall()
+    if(result):
+        return True
+    else:
+        return False
 
 if __name__ == '__main__':
     app.run()
