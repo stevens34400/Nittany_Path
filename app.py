@@ -416,6 +416,7 @@ def login():
             else:
                 return (render_template('Home_Student.html'))
         elif (user_input_prof_checked):
+            team_id = 0
             return (render_template('Home_Prof.html'))
         else:
             return(render_template('login_page_fail.html'))
@@ -500,7 +501,6 @@ def user_info():
 
     #If student is a TA
     if(team_id):
-        print(team_id[0])
         #Obtain course student is TAing
         cursor.execute('''SELECT Courses
                             FROM Sections
@@ -511,7 +511,6 @@ def user_info():
         return render_template('user_info_TA.html', course_description=test, student_info=student_info,courses=course_ta[0])
 
     else:
-        print('not TA')
         connection.commit()
         return render_template('user_info.html', course_description=test, student_info=student_info)
 
@@ -569,14 +568,14 @@ def create_post_student():
     cursor = connection.cursor()
     global selected_course
     global post_no
+    global team_id
 
     #user input email from global variable
     courses = get_courses(user_input_email)
-    # print(courses[0])
-    # print(courses[1])
-    # print(courses[2])
+    if team_id:
+        courses_TA = TA_course(team_id)
 
-    print('tag: ',tag)
+
 
     if request.method == 'POST' :
         if (tag==0):
@@ -607,7 +606,6 @@ def create_post_student():
                 max_comment_no = max_comment_no[0][0] + 1
             else:
                 max_comment_no = 1
-            print(max_comment_no)
             # enter new comment
             enter_comment(selected_course,post_no,max_comment_no,user_input_email,comment_content)
 
@@ -744,6 +742,53 @@ def create_post_student():
         print('course3')
 
         return render_template('create_posts.html', course=selected_course, course_posts=df_course_posts,course_comments=df_course_comments,tvalues=df_post_no[0])
+
+    for i in ta_course:
+        if (selected_course==i[0]):
+            # Posts from course TA
+            cursor.execute('''SELECT *
+                                                    FROM Posts p1
+                                                    WHERE p1.Courses=?''', (i[0],))
+            course_ta_posts = cursor.fetchall()
+            df_course_posts = pd.DataFrame(course_ta_posts)
+            # If there are posts delete the course column
+            if (df_course_posts.empty == False):
+                df_course_posts = df_course_posts.drop(columns=0)
+            df_course_posts = df_course_posts.values.tolist()
+
+            # All posts from course TA including course attribute
+            df_course_posts_course = pd.DataFrame(course_ta_posts)
+            df_course_posts_course = df_course_posts_course.values.tolist()
+
+            index = 0
+            comments_course = []
+            # iteration through number of posts
+            for i in df_course_posts_course:
+                cursor.execute('''SELECT c1.Post_No, c1.Comment_No, c1.Comment_Info, c1.Student_Email
+                                                            FROM Comments c1
+                                                            WHERE c1.Courses = ? AND Post_No = ?''',
+                               (df_course_posts_course[0][0], df_course_posts_course[index][1]))
+                index = index + 1
+                comments_course.append(cursor.fetchall())
+            # comments_course2 [Post No]-[comment_no]-[element]
+
+            # Iterate through post no
+            df_course_comments = pd.DataFrame()
+            for posts in comments_course:
+                df_course_comments = df_course_comments.append(posts, ignore_index=True)
+            df_course_comments = df_course_comments.values.tolist()
+
+            df_post_no = pd.DataFrame(df_course_posts)
+            df_post_no = df_post_no.drop(columns=[1, 2]).drop_duplicates()
+            df_post_no = df_post_no.transpose()
+            df_post_no = df_post_no.values.tolist()
+            print(df_post_no)
+
+            print('courseTA')
+
+            return render_template('create_posts.html', course=selected_course, course_posts=df_course_posts,
+                                   course_comments=df_course_comments, tvalues=df_post_no[0])
+
 
 @app.route('/createpostprof',methods=['POST','GET'])
 def create_post_prof():
@@ -1025,6 +1070,11 @@ def submitscores():
                                 WHERE p1.Professor_Email = ?''', (user_input_email,))
     # Obtain course he's teaching
     course_teaching = cursor.fetchall()
+    print('teamid: ',team_id)
+    if(team_id):
+        print('ta')
+
+    print(course_teaching)
     tag=0
     return render_template('submit_scores.html',course=course_teaching[0][0])
 
