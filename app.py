@@ -1141,6 +1141,51 @@ def submitscoreexam():
     connection.commit()
     return render_template('submit_scores_exam.html', tvalues=df_course_exam_no,course=course_teaching[0][0])
 
+@app.route('/dropcourse',methods=['POST','GET'])
+def drop_course():
+    connection = sql.connect('database.db')
+    cursor = connection.cursor()
+
+    if request.method == "POST":
+        dropcourse=request.form['Course']
+        cursor.execute('''SELECT Drop_Deadline
+                            FROM Course
+                            WHERE Courses=?''',(dropcourse,))
+        latedropdate=cursor.fetchall()
+
+        #Delete user from Enrolls table
+        cursor.execute('''DELETE FROM Enrolls
+                            WHERE Student_Email = ? AND Courses = ?''',(user_input_email,dropcourse))
+
+        #Delete comments
+        cursor.execute('''DELETE FROM Comments
+                            WHERE Student_Email = ? AND Courses = ?''',(user_input_email,dropcourse))
+
+        #Obtain Post Numbers for posts created by user
+        cursor.execute('''SELECT Post_No
+                            FROM Posts
+                            WHERE Student_Email = ? AND Courses = ?''',(user_input_email,dropcourse))
+        postnumbers = cursor.fetchall()
+        for i in postnumbers:
+            print(i[0])
+
+        #Delete Posts from post numbers
+        for i in postnumbers:
+            cursor.execute('''DELETE FROM Posts
+                                WHERE Post_No = ?''',(i))
+
+        #Delete Comments with the same post number listed
+        for i in postnumbers:
+            cursor.execute('''DELETE FROM Comments
+                                WHERE Post_No=?''',i)
+
+        connection.commit()
+
+    courses = get_courses(user_input_email)
+    df_courses = pd.DataFrame(courses)
+    df_courses = df_courses[0].values.tolist()
+
+    return render_template('drop_course.html',courses=df_courses)
 
 def check_user_input_student(user_input_email, user_input_password):
     connection = sql.connect('database.db')
