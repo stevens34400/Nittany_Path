@@ -3,9 +3,7 @@ from unicodedata import normalize
 import unicodedata
 import sqlite3 as sql
 import pandas as pd
-import os
-import hashlib
-import re
+import datetime
 
 
 from pandas import DataFrame
@@ -1064,6 +1062,8 @@ def submitscores():
     connection = sql.connect('database.db')
     cursor = connection.cursor()
     global tag
+    global ta_course
+    tag=0
     # Obtain class prof is teaching
     cursor.execute('''SELECT p1.Course
                                 FROM Professors p1
@@ -1073,9 +1073,10 @@ def submitscores():
     print('teamid: ',team_id)
     if(team_id):
         print('ta')
+        ta_course=TA_course(team_id)
+        print(ta_course)
+        return render_template('submit_scores.html',course=ta_course[0][0])
 
-    print(course_teaching)
-    tag=0
     return render_template('submit_scores.html',course=course_teaching[0][0])
 
 @app.route('/submitscorehw',methods=['POST','GET'])
@@ -1094,6 +1095,9 @@ def submitscoreshw():
                             WHERE p1.Professor_Email = ?''', (user_input_email,))
     # Obtain course he's teaching
     course_teaching = cursor.fetchall()
+
+    if (team_id):
+        course_teaching =ta_course
 
     #Obtain number of assignments for hw
     cursor.execute('''SELECT h1.Course_HW_No
@@ -1177,6 +1181,9 @@ def submitscoreexam():
     # Obtain course he's teaching
     course_teaching = cursor.fetchall()
 
+    if(team_id):
+        course_teaching = ta_course
+
     # Obtain number of assignments for exam
     cursor.execute('''SELECT e1.Course_Exam_No
                             FROM Exams e1
@@ -1229,6 +1236,7 @@ def submitscoreexam():
 def drop_course():
     connection = sql.connect('database.db')
     cursor = connection.cursor()
+    result = True
 
     if request.method == "POST":
         dropcourse=request.form['Course']
@@ -1236,34 +1244,55 @@ def drop_course():
                             FROM Course
                             WHERE Courses=?''',(dropcourse,))
         latedropdate=cursor.fetchall()
+        latedropdate = latedropdate[0][0]
+        latedropdate_day = latedropdate[3]+latedropdate[4]
+        latedropdate_month = latedropdate[0]+latedropdate[1]
+        latedropdate_year = latedropdate[6]+latedropdate[7]+latedropdate[8]+latedropdate[9]
 
-        #Delete user from Enrolls table
-        cursor.execute('''DELETE FROM Enrolls
-                            WHERE Student_Email = ? AND Courses = ?''',(user_input_email,dropcourse))
+        current_date = datetime.datetime.today()
+        print(current_date)
 
-        #Delete comments
-        cursor.execute('''DELETE FROM Comments
-                            WHERE Student_Email = ? AND Courses = ?''',(user_input_email,dropcourse))
+        if(current_date.year>int(latedropdate_year)):
+            result = False
+            print('year')
+        if(current_date.month>int(latedropdate_month)):
+            result = False
+            print('month')
+        if(current_date.day>int(latedropdate_day)):
+            result = False
+            print('day')
 
-        #Obtain Post Numbers for posts created by user
-        cursor.execute('''SELECT Post_No
-                            FROM Posts
-                            WHERE Student_Email = ? AND Courses = ?''',(user_input_email,dropcourse))
-        postnumbers = cursor.fetchall()
-        for i in postnumbers:
-            print(i[0])
+        if (result):
+            #Delete user from Enrolls table
+            cursor.execute('''DELETE FROM Enrolls
+                                WHERE Student_Email = ? AND Courses = ?''',(user_input_email,dropcourse))
 
-        #Delete Posts from post numbers
-        for i in postnumbers:
-            cursor.execute('''DELETE FROM Posts
-                                WHERE Post_No = ?''',(i))
-
-        #Delete Comments with the same post number listed
-        for i in postnumbers:
+            #Delete comments
             cursor.execute('''DELETE FROM Comments
-                                WHERE Post_No=?''',i)
+                                WHERE Student_Email = ? AND Courses = ?''',(user_input_email,dropcourse))
 
-        connection.commit()
+            #Obtain Post Numbers for posts created by user
+            cursor.execute('''SELECT Post_No
+                                FROM Posts
+                                WHERE Student_Email = ? AND Courses = ?''',(user_input_email,dropcourse))
+            postnumbers = cursor.fetchall()
+
+            #Delete Posts from post numbers
+            for i in postnumbers:
+                cursor.execute('''DELETE FROM Posts
+                                    WHERE Post_No = ?''',(i))
+
+            #Delete Comments with the same post number listed
+            for i in postnumbers:
+                cursor.execute('''DELETE FROM Comments
+                                    WHERE Post_No=?''',i)
+            connection.commit()
+        else:
+            courses = get_courses(user_input_email)
+            df_courses = pd.DataFrame(courses)
+            df_courses = df_courses[0].values.tolist()
+
+            return render_template('drop_course_fail.html',courses=df_courses)
 
     courses = get_courses(user_input_email)
     df_courses = pd.DataFrame(courses)
