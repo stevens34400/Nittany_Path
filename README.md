@@ -11,16 +11,19 @@ Login page for user to enter email and password. Will verify whether user is par
 <p align="center">
   <img width="800" height="500" src="https://github.com/stevens34400/nittany_path/blob/master/images/student_ta_homepage.PNG">
 </p>
+Home page for all Students and TAs in Nittany State University.
 
 ### Student Userinfo and Courses Page
 <p align="center">
   <img width="800" height="500" src="https://github.com/stevens34400/nittany_path/blob/master/images/student_courseinfo.PNG">
 </p>
+List of all courses student is taking and shows important information on student that database has stored. Note there is also an option for students to change their user password using the button at the bottom of page.
 
 ### TA Userinfo and Courses Page
 <p align="center">
   <img width="800" height="500" src="https://github.com/stevens34400/nittany_path/blob/master/images/ta_courseinfo.PNG">
 </p>
+Similar to a usual student user info and course page, but with an additional table holding courses student is a TA in.
 
 #### Get Assignment Grades
 <p align="center">
