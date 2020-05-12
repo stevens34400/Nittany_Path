@@ -5,7 +5,6 @@ import sqlite3 as sql
 import pandas as pd
 import datetime
 
-
 from pandas import DataFrame
 
 app = Flask(__name__)
