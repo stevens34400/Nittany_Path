@@ -11,7 +11,7 @@ Login page for user to enter email and password. Will verify whether user is par
 <p align="center">
   <img width="800" height="500" src="https://github.com/stevens34400/nittany_path/blob/master/images/student_ta_homepage.PNG">
 </p>
-Home page for all Students and TAs in Nittany State University.
+Home page for all Students and TAs in Nittany State University. Students can see courses and student info, create/view posts and comments, and drop courses using 3 buttons on page. TAs have the extra ability to submit scores for classes they TA in, explained later on.
 
 ### Student Userinfo and Courses Page
 <p align="center">
@@ -59,6 +59,7 @@ Allows students to drop a course assuming that the current date has not passed t
 <p align="center">
   <img width="800" height="500" src="https://github.com/stevens34400/nittany_path/blob/master/images/prof_home.PNG">
 </p>
+Home page for all professors in Nittany State University. Professors can create/view posts and comments, create assignments and submit score for assignments using 3 buttons on page.
 
 ### Create Assignments
 <p align="center">
