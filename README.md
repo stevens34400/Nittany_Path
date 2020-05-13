@@ -1,4 +1,4 @@
-# Nittany Path (in progress)
+# Nittany Path
 This project was a submission for Penn State's Database Management Systems course (CMPSC 431W). Nittany path is designed and implemented to be a course management website for students and faculty. Stakeholders include students, teaching assistants (TA), and professors. Functionalities include but are not limited to professors creating assignment, students checking courses they are taking, and TAs submitting scores for assignments. The back-end interface uses python as a programming language and the web framework, flask. Front-end template designs use HTML, CSS and JS. Note that dataset for Nittany State University was given through these [csv files](https://github.com/stevens34400/nittany_path/tree/master/dataset), which also can be seen under the dataset folder in repository.
 
 ## Login Page
